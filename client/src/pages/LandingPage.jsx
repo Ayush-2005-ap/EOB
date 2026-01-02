@@ -4,8 +4,33 @@ import HeroSection from "../components/landing/HeroSection";
 import ChatbotContainer from "../components/chatbot/ChatbotContainer";
 import ExperiencesSection from "../components/landing/ExperienceSection";
 import NewsSection from "../components/landing/NewsSection";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 export default function LandingPage() {
+
+    useEffect(() => {
+        const shown = sessionStorage.getItem("chatbotToastShown");
+
+        if (!shown) {
+            toast(
+                "🤖 Need help? Try our AI Chatbot from the bottom-right corner!",
+                {
+                    duration: 2000,
+                    icon: "💬",
+                    style: {
+                        borderRadius: "12px",
+                        background: "#C9783E", // blue-800
+                        color: "#fff",
+                        padding: "16px",
+                        fontWeight: "500",
+                    }
+                }
+            );
+            sessionStorage.setItem("chatbotToastShown", "true");
+        }
+    }, []);
+
     return (
         <>
             <AnnouncementBanner />
