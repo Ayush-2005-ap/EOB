@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* 🔔 Chat button subtle jump animation */
+@keyframes chatBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Utility class */
+.animate-chat-bounce {
+  animation: chatBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes blinkColor {
+  0% {
+    background-color: #ffd700; /* Yellow */
+    color: black;
+  }
+  50% {
+    background-color: black;
+    color: #ffd700; /* Yellow text */
+  }
+  100% {
+    background-color: #ffd700;
+    color: black;
+  }
+}
+
+.new-ribbon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 6px 18px;
+  font-size: 12px;
+  font-weight: bold;
+  transform: rotate(45deg) translate(20px, -10px);
+  transform-origin: top right;
+  animation: blinkColor 0.5s infinite;
+}
