@@ -6,6 +6,7 @@ import ExperiencesSection from "../components/landing/ExperienceSection";
 import NewsSection from "../components/landing/NewsSection";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
+import LatestNewsSection from "../components/landing/LatestNewsSection";
 
 export default function LandingPage() {
 
@@ -47,11 +48,12 @@ export default function LandingPage() {
             </section>
             <HeroSection />
             <ExperiencesSection />
-            <NewsSection />
+            <LatestNewsSection />
+            {/* <NewsSection /> */}
             {/* <StatsSection /> */}
             {/* <ServicesSection /> */}
 
-            <ChatbotContainer />
+            {/* <ChatbotContainer /> */}
         </>
     );
 }

@@ -7,12 +7,15 @@ import LandingPage from "./pages/LandingPage";
 import ContactPage from "./pages/Contact";
 import { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
+import Rankings from "./pages/Ranking";
+import StateDetails from "./pages/StateDetails";
 
 function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen flex flex-col">
         <Navbar />
+        {/* <ChatbotContainer /> */}
         <div className="flex-1">
           <Routes>
             <Route path="/" element={
@@ -22,9 +25,11 @@ function App() {
             } />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contactUs" element={<ContactPage />}/>
-            {/* Add more routes as needed */}
+            <Route path="/ranking" element={<Rankings />}/>
+            <Route path="/rankings/:stateId" element={<StateDetails />}/>
           </Routes>
         </div>
+        <ChatbotContainer />
         <Footer />
         <Toaster position="top-right" reverseOrder={false} />
       </div>
