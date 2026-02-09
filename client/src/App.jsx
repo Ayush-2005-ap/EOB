@@ -11,6 +11,10 @@ import StateDetails from "./pages/StateDetails";
 import ResourcesHome from "./pages/Resources/ResourcesHome";
 import ResourceDetail from "./pages/Resources/ResourceDetail";
 
+// ADD THESE TWO IMPORTS
+import Outreach from "./pages/Outreach";
+import Services from "./pages/Services";
+
 // Admin
 import AdminLogin from "./admin/pages/Login";
 import Dashboard from "./admin/pages/Dashboard";
@@ -47,6 +51,8 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contactUs" element={<ContactPage />} />
+          <Route path="/outreach" element={<Outreach />} />
+          <Route path="/services" element={<Services />} />
           <Route path="/ranking" element={<Rankings />} />
           <Route path="/rankings/:stateId" element={<StateDetails />} />
           <Route path="/resources" element={<ResourcesHome />} />

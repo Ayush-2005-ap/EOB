@@ -1,44 +1,49 @@
-import React from "react";
+import { motion } from "framer-motion";
 
-function AboutPage() {
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15 },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+};
+
+export default function About() {
   return (
-    <div className="container mx-auto py-12 px-4">
-      <section className="text-center mb-10">
-        <h1 className="text-4xl font-bold">About Ease of Doing Business</h1>
-        <p className="mt-2 text-lg text-gray-600">
-          Empowering Businesses with Simplified Policy & Tech-Driven Solutions
-        </p>
-      </section>
+    <motion.div
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="container mx-auto px-6 py-16 max-w-5xl"
+    >
+      <motion.h1
+        variants={item}
+        className="text-4xl font-bold mb-8 text-center"
+      >
+        About Ease of Doing Business
+      </motion.h1>
 
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold">Our Mission</h2>
-        <p className="mt-2 text-gray-700">
-          Our mission is to enhance economic participation and accelerate business growth by reducing barriers...
-        </p>
-      </section>
+      <motion.p variants={item} className="text-gray-700 leading-relaxed mb-6">
+        The Ease of Doing Business initiative focuses on improving the regulatory
+        and business environment in India by identifying barriers that affect
+        entrepreneurs, small businesses, and emerging enterprises.
+      </motion.p>
 
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold">Who We Are</h2>
-        <p className="mt-2 text-gray-700">
-          Ease of Doing Business is a premier independent agency focused on delivering evidence-based policy...
-        </p>
-      </section>
+      <motion.p variants={item} className="text-gray-700 leading-relaxed mb-6">
+        The objective is to simplify procedures, reduce compliance burden, and
+        enable businesses to start, operate, and grow in a transparent ecosystem.
+      </motion.p>
 
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold">Leadership</h2>
-        <p className="mt-2 text-gray-700">
-          <strong>Abhijeet Sinha</strong> – National Program Director...
-        </p>
-      </section>
-
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold">Our Impact</h2>
-        <p className="mt-2 text-gray-700">
-          We aim to support national goals for economic growth by helping businesses operate with fewer barriers...
-        </p>
-      </section>
-    </div>
+      <motion.p variants={item} className="text-gray-700 leading-relaxed">
+        The platform connects policymakers, researchers, industry leaders, and
+        citizens to evaluate reforms and build a more efficient, inclusive, and
+        innovation-friendly economy.
+      </motion.p>
+    </motion.div>
   );
 }
-
-export default AboutPage;

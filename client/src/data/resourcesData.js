@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-export const resourceData = [
+const resourceData = [
   {
     id: uuidv4(),
     category: "research",
@@ -386,3 +386,5 @@ export const resourceData = [
     pdf: "/downloads/trust-based-governance.pdf"
   },
 ];
+
+export default resourceData;
