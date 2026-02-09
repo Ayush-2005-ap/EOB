@@ -1,26 +1,55 @@
-import React from 'react';
+import React from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 const Navbar = () => {
-    return (
-        <nav className="bg-[#9A4020] p-2">
-            <div className="container mx-auto flex justify-between items-center">
-                <div className="text-white text-lg font-bold">
-                    <img src="/logo.png" alt="Logo" className="h-8 hover:cursor-pointer" />
-                    <div>
-                        <p className="text-xs text-white/80">
-                            An initiative of Centre for Civil Society
-                        </p>
-                    </div>
-                </div>
-                <div className="space-x-4">
-                    <a href="/" className="text-white hover:text-white">Home</a>
-                    <a href="/about" className="text-white hover:text-white">About</a>
-                    <a href="/services" className="text-white hover:text-white">Services</a>
-                    <a href="/contactUs" className="text-white hover:text-white">Contact</a>
-                </div>
-            </div>
-        </nav>
-    );
+  const navigate = useNavigate();
+
+  return (
+    <nav className="bg-[#9A4020] p-2">
+      <div className="container mx-auto flex justify-between items-center">
+
+        {/* Logo Section */}
+        <div
+          onClick={() => navigate("/")}
+          className="flex items-center gap-2 cursor-pointer"
+        >
+          <img src="/logo.png" alt="Logo" className="h-8" />
+          <div>
+            <p className="text-xs text-white/80">
+              An initiative of Centre for Civil Society
+            </p>
+          </div>
+        </div>
+
+        {/* Navigation Links */}
+        <div className="flex items-center gap-6 text-white relative">
+
+          <Link to="/" className="hover:underline">
+            Home
+          </Link>
+
+          <Link to="/about" className="hover:underline">
+            About
+          </Link>
+
+          <Link to="/services" className="hover:underline">
+            Services
+          </Link>
+
+          <Link to='/resources' className="hover:underline">
+            Resources
+          </Link>
+          <Link to='/outreach' className="Hover:underline">
+            Outreach
+          </Link>
+          <Link to="/contactUs" className="hover:underline">
+            Contact
+          </Link>
+
+        </div>
+      </div>
+    </nav>
+  );
 };
 
 export default Navbar;

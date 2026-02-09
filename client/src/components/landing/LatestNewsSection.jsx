@@ -1,67 +1,55 @@
-import { newsData } from "../../data/newsData";
+import { useEffect, useState } from "react";
 
-export default function LatestNewsSection() {
+export default function NewsHome() {
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/news`)
+      .then(res => res.json())
+      .then(data => {
+        setNews(data.data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div className="text-center py-20">Loading...</div>;
+
   return (
-    <section className="bg-gray-50 py-14">
-      <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 py-12 max-w-4xl">
+      <h1 className="text-3xl font-bold mb-8 text-center">Latest News</h1>
 
-        {/* Section Header */}
-        <div className="mb-10">
-          <h2 className="text-3xl font-bold text-gray-900">
-            Latest News
-          </h2>
-          <div className="mt-2 h-1 w-24 bg-red-700 rounded"></div>
-        </div>
-
-        {/* News List */}
-        <div className="space-y-6">
-          {newsData.map((news, index) => (
-            <article
-              key={index}
-              className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition"
-            >
-              <h3 className="text-lg font-semibold text-gray-900">
-                <a
-                  href={news.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-red-700 transition"
-                >
-                  {news.title}
-                </a>
-              </h3>
-
-              <p className="mt-1 text-sm text-gray-500">
-                {news.date} &nbsp;|&nbsp; <span className="italic">{news.source}</span>
-              </p>
-
-              <p className="mt-3 text-gray-600">
-                {news.description}
-              </p>
-
-              <a
-                href={news.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block mt-4 text-red-700 font-medium hover:underline"
-              >
-                Read more →
-              </a>
-            </article>
-          ))}
-        </div>
-
-        {/* Footer link */}
-        {/* <div className="mt-8 text-right">
-          <a
-            href="#"
-            className="text-red-700 font-semibold hover:underline"
+      <div className="space-y-6">
+        {news.map(item => (
+          <div
+            key={item.id}
+            className="border rounded-lg p-6 bg-white hover:shadow-md transition"
           >
-            Read more news →
-          </a>
-        </div> */}
+            <h2 className="text-xl font-semibold text-red-700">
+              {item.title}
+            </h2>
 
+            <p className="mt-2 text-gray-700">
+              {item.description}
+            </p>
+
+            <div className="mt-3 text-sm text-gray-500 flex gap-4">
+              <span>📰 {item.source}</span>
+              <span>📅 {item.date}</span>
+            </div>
+
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block mt-4 text-blue-600 font-semibold hover:underline"
+            >
+              Read full article →
+            </a>
+          </div>
+        ))}
       </div>
-    </section>
+    </div>
   );
 }

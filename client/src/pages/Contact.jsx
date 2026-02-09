@@ -1,13 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        toast.success("Message sent successfully!");
-        e.target.reset();
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const formData = new FormData(e.target);
+  
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      message: formData.get("message"),
+    };
+  
+    try {
+      await fetch("http://localhost:5050/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+  
+      toast.success("Message sent! Check your email 📩");
+      e.target.reset();
+    } catch (err) {
+      toast.error("Something went wrong");
     }
+  };
+  
 
   return (
     <div className="container mx-auto py-12 px-4">
@@ -20,19 +54,16 @@ function ContactPage() {
         </p>
       </section>
 
-      {/* TOP SECTION: Contact Info + Map */}
+      {/* Contact Info + Map */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-
-        {/* Contact Information */}
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold">Contact Information</h2>
           <p><strong>Email:</strong> info@easeofdoingbusiness.org</p>
           <p><strong>Phone:</strong> +91-XXXXXXXXXX</p>
-          <p><strong>Address:</strong> Your Office Address Here</p>
+          <p><strong>Address:</strong> Centre for Civil Society, New Delhi</p>
           <p><strong>Working Hours:</strong> Mon – Fri, 10:00 AM – 5:30 PM</p>
         </div>
 
-        {/* Map (Square Box) */}
         <div className="w-full h-64 md:h-72 rounded-lg overflow-hidden shadow">
           <iframe
             className="w-full h-full border-0"
@@ -41,10 +72,9 @@ function ContactPage() {
             referrerPolicy="no-referrer-when-downgrade"
           ></iframe>
         </div>
-
       </section>
 
-      {/* BOTTOM SECTION: Contact Form */}
+      {/* Contact Form */}
       <section className="max-w-3xl mx-auto">
         <h2 className="text-2xl font-semibold mb-6 text-center">
           Get in Touch
@@ -55,8 +85,12 @@ function ContactPage() {
             <label className="block text-sm font-medium">Full Name</label>
             <input
               type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
               className="w-full border p-2 rounded-md"
               placeholder="Your name"
+              required
             />
           </div>
 
@@ -64,8 +98,12 @@ function ContactPage() {
             <label className="block text-sm font-medium">Email Address</label>
             <input
               type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               className="w-full border p-2 rounded-md"
               placeholder="you@example.com"
+              required
             />
           </div>
 
@@ -73,6 +111,9 @@ function ContactPage() {
             <label className="block text-sm font-medium">Phone (optional)</label>
             <input
               type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
               className="w-full border p-2 rounded-md"
               placeholder="+91-"
             />
@@ -82,6 +123,9 @@ function ContactPage() {
             <label className="block text-sm font-medium">Subject</label>
             <input
               type="text"
+              name="subject"
+              value={formData.subject}
+              onChange={handleChange}
               className="w-full border p-2 rounded-md"
               placeholder="Subject"
             />
@@ -90,21 +134,24 @@ function ContactPage() {
           <div>
             <label className="block text-sm font-medium">Message</label>
             <textarea
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
               className="w-full border p-2 rounded-md"
               rows="4"
               placeholder="Write your message..."
+              required
             />
           </div>
 
           <button
             type="submit"
-            className="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 hover:cursor-pointer transition"
+            className="bg-[#9A4020] text-white py-2 px-6 rounded-md hover:bg-[#C9783E] hover:cursor-pointer transition"
           >
             Send Message
           </button>
         </form>
       </section>
-
     </div>
   );
 }
