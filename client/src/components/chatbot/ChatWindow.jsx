@@ -35,7 +35,8 @@ export default function ChatWindow({ onClose }) {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5050/api/chat", {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5050/api";
+      const res = await fetch(`${apiUrl}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: userMsg.text }),
@@ -62,7 +63,7 @@ export default function ChatWindow({ onClose }) {
 
   return (
     <div className="fixed bottom-6 right-6 w-96 h-[500px] bg-white rounded-xl shadow-2xl flex flex-col">
-      
+
       {/* Header */}
       <div className="bg-[#9A4020] text-white p-3 rounded-t-xl flex justify-between items-center">
         <span className="font-semibold">EoDB Assistant</span>
@@ -79,11 +80,10 @@ export default function ChatWindow({ onClose }) {
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`max-w-[80%] p-2 rounded-lg ${
-              msg.sender === "user"
+            className={`max-w-[80%] p-2 rounded-lg ${msg.sender === "user"
                 ? "bg-blue-100 ml-auto"
                 : "bg-gray-100"
-            }`}
+              }`}
           >
             {msg.text}
           </div>
@@ -106,11 +106,10 @@ export default function ChatWindow({ onClose }) {
         <button
           onClick={sendMessage}
           disabled={loading}
-          className={`p-2 rounded-full flex items-center justify-center ${
-            loading
+          className={`p-2 rounded-full flex items-center justify-center ${loading
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-[#9A4020] hover:bg-[#C9783E] text-white"
-          }`}
+            }`}
         >
           <span className="material-icons">
             {loading ? "hourglass_top" : "send"}

@@ -29,7 +29,8 @@ function ContactPage() {
     };
   
     try {
-      await fetch("http://localhost:5050/api/contact", {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5050/api";
+      await fetch(`${apiUrl}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
