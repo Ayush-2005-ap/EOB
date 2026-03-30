@@ -1,30 +1,37 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const newsData = require("../data/news");
+const News = require('../models/News');
+const { isAdmin } = require('../middleware/authMiddleware');
 
-// GET ALL NEWS
-router.get("/", (req, res) => {
-  res.json({
-    success: true,
-    data: newsData,
-  });
+// Get all news
+router.get('/', async (req, res) => {
+    try {
+        const news = await News.find().sort({ createdAt: -1 });
+        res.json(news);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
-// GET SINGLE NEWS
-router.get("/:id", (req, res) => {
-  const item = newsData.find(n => n.id === req.params.id);
+// Create news (Admin)
+router.post('/', isAdmin, async (req, res) => {
+    const news = new News(req.body);
+    try {
+        const newNews = await news.save();
+        res.status(201).json({ success: true, data: newNews });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
 
-  if (!item) {
-    return res.status(404).json({
-      success: false,
-      message: "News not found",
-    });
-  }
-
-  res.json({
-    success: true,
-    data: item,
-  });
+// Delete news (Admin)
+router.delete('/:id', isAdmin, async (req, res) => {
+    try {
+        await News.findByIdAndDelete(req.params.id);
+        res.json({ success: true, message: 'News deleted' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
 module.exports = router;

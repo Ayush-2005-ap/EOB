@@ -1,19 +1,25 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { adminLogin } from "../../services/api";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    if (email === "admin@eodb.com" && password === "admin123") {
-      localStorage.setItem("adminAuth", "true");
-      toast.success("Login successful");
-      navigate("/admin/dashboard");
-    } else {
-      toast.error("Invalid credentials");
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const data = await adminLogin({ email, password });
+      if (data.success) {
+        localStorage.setItem("adminToken", data.token);
+        localStorage.setItem("adminUser", JSON.stringify(data.user));
+        toast.success("Login successful");
+        navigate("/admin/dashboard");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Invalid credentials");
     }
   };
 
@@ -39,7 +45,7 @@ export default function Login() {
 
         <button
           onClick={handleLogin}
-          className="w-full bg-red-700 text-white py-2 rounded hover:cursor-pointer"
+          className="w-full bg-[#9A4020] text-white py-2 rounded hover:cursor-pointer"
         >
           Login
         </button>

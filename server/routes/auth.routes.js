@@ -1,24 +1,12 @@
 const express = require("express");
 const router = express.Router();
+const { loginAdmin, getMe } = require("../controller/auth.controller");
+const { authenticateToken } = require("../middleware/authMiddleware");
 
-router.post("/login", (req, res) => {
-  const { email, password } = req.body;
+// LOGIN (Public)
+router.post("/login", loginAdmin);
 
-  // simple demo auth (later replace with DB)
-  if (
-    email === process.env.ADMIN_EMAIL &&
-    password === process.env.ADMIN_PASSWORD
-  ) {
-    return res.json({
-      success: true,
-      token: "admin-secret-token",
-    });
-  }
-
-  res.status(401).json({
-    success: false,
-    message: "Invalid credentials",
-  });
-});
+// GET CURRENT USER (Protected)
+router.get("/me", authenticateToken, getMe);
 
 module.exports = router;

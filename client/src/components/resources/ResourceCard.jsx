@@ -3,7 +3,7 @@
 // export default function ResourceCard({ item }) {
 //   return (
 //     <div className="border p-6 rounded-lg bg-white shadow">
-//       <h2 className="text-xl font-semibold text-red-700">
+//       <h2 className="text-xl font-semibold text-[#9A4020]">
 //         {item.title}
 //       </h2>
 

@@ -1,34 +1,58 @@
 const express = require("express");
 const router = express.Router();
-let resources = require("../data/resources");
+const Resource = require("../models/Resource");
+const { authenticateToken, isAdmin } = require("../middleware/authMiddleware");
 
-// simple middleware
-const isAdmin = (req, res, next) => {
-  const token = req.headers.authorization;
-  if (token === "Bearer admin-secret-token") return next();
-  return res.status(403).json({ message: "Not allowed" });
-};
-
-// CREATE
-router.post("/", isAdmin, (req, res) => {
-  const newItem = { id: Date.now().toString(), ...req.body };
-  resources.push(newItem);
-  res.json({ success: true, data: newItem });
+// GET ALL (Public)
+router.get("/", async (req, res) => {
+  try {
+    const resources = await Resource.find().sort({ createdAt: -1 });
+    res.json(resources);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
-// UPDATE
-router.put("/:id", isAdmin, (req, res) => {
-  resources = resources.map(r =>
-    r.id === req.params.id ? { ...r, ...req.body } : r
-  );
-  res.json({ success: true });
+// GET ONE (Public)
+router.get("/:id", async (req, res) => {
+    try {
+        const resource = await Resource.findById(req.params.id);
+        if (!resource) return res.status(404).json({ message: "Not found" });
+        res.json(resource);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
-// DELETE
-router.delete("/:id", isAdmin, (req, res) => {
-  resources = resources.filter(r => r.id !== req.params.id);
-  res.json({ success: true });
+// CREATE (Admin Only)
+router.post("/", authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const newResource = new Resource(req.body);
+    const saved = await newResource.save();
+    res.status(201).json({ success: true, data: saved });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
 });
 
-// 🔥 THIS WAS MISSING
+// UPDATE (Admin Only)
+router.put("/:id", authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const updated = await Resource.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// DELETE (Admin Only)
+router.delete("/:id", authenticateToken, isAdmin, async (req, res) => {
+  try {
+    await Resource.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: "Resource deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

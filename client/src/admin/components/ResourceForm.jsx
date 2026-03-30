@@ -37,7 +37,7 @@ export default function ResourceForm({ onSubmit, initialData = {} }) {
       className="bg-white shadow rounded-lg p-6 space-y-5 max-w-3xl"
     >
       <h2 className="text-xl font-bold text-gray-800">
-        {initialData.id ? "Edit Resource" : "Add Resource"}
+        {initialData._id ? "Edit Resource" : "Add Resource"}
       </h2>
 
       {/* CATEGORY */}
@@ -156,7 +156,7 @@ export default function ResourceForm({ onSubmit, initialData = {} }) {
       <div className="pt-4">
         <button
           type="submit"
-          className="bg-red-700 hover:bg-red-800 text-white px-6 py-2 rounded font-semibold"
+          className="bg-[#9A4020] hover:bg-[#80351A] text-white px-6 py-2 rounded font-semibold"
         >
           {initialData.id ? "Update Resource" : "Add Resource"}
         </button>

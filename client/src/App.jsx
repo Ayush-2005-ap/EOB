@@ -23,6 +23,8 @@ import AddResource from "./admin/pages/AddResource";
 import EditResource from "./admin/pages/EditResource";
 import AdminRoute from "./admin/components/AdminRoute";
 import AdminLayout from "./admin/components/AdminLayout";
+import ManageRankings from "./admin/pages/ManageRankings";
+import ManageNews from "./admin/pages/ManageNews";
 
 function LayoutWrapper({ children }) {
   const location = useLocation();
@@ -54,6 +56,7 @@ function App() {
           <Route path="/outreach" element={<Outreach />} />
           <Route path="/services" element={<Services />} />
           <Route path="/ranking" element={<Rankings />} />
+          <Route path="/rankings" element={<Rankings />} />
           <Route path="/rankings/:stateId" element={<StateDetails />} />
           <Route path="/resources" element={<ResourcesHome />} />
           <Route path="/resources/:id" element={<ResourceDetail />} />
@@ -74,6 +77,8 @@ function App() {
             <Route path="resources" element={<ResourcesAdmin />} />
             <Route path="resources/add" element={<AddResource />} />
             <Route path="resources/edit/:id" element={<EditResource />} />
+            <Route path="rankings" element={<ManageRankings />} />
+            <Route path="news" element={<ManageNews />} />
           </Route>
         </Routes>
       </LayoutWrapper>
