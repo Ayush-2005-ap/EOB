@@ -1,27 +1,13 @@
-import { useState } from "react";
 import IndiaMap from "./IndiaMap";
 import { useNavigate } from "react-router";
 
 export default function HeroSection() {
-  const [tooltip, setTooltip] = useState(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
   const navigate = useNavigate();
 
-  const handleHover = (data, event) => {
-    if (!data) {
-      setTooltip(null);
-      return;
-    }
 
-    setTooltip(data);
-    setPosition({
-      x: event.clientX,
-      y: event.clientY,
-    });
-  };
 
   return (
-    <section className="bg-gray-200 py-8 relative">
+    <section className="bg-gray-200 py-12 relative overflow-hidden">
       <div className="container mx-auto px-4 grid md:grid-cols-2 gap-8 items-center">
 
         {/* Left Content */}
@@ -52,28 +38,13 @@ export default function HeroSection() {
         </div>
 
         {/* Right Side: Map */}
-        <div className="relative flex justify-center">
-          <div className="scale-150 origin-center"> {/* ⬅ shrink without crop */}
-            <IndiaMap onHover={handleHover} />
-          </div>
+        <div className="relative flex justify-center items-center">
+          <IndiaMap />
         </div>
 
       </div>
 
-      {/* Tooltip */}
-      {tooltip && (
-        <div
-          className="absolute bg-yellow-400 text-black p-3 rounded shadow-lg text-sm z-50 pointer-events-none"
-          style={{
-            top: position.y - 110,
-            left: position.x - 80,
-          }}
-        >
-          <p className="font-bold">{tooltip.name}</p>
-          <p>Rank: {tooltip.rank}</p>
-          <p>Score: {tooltip.score}</p>
-        </div>
-      )}
+
     </section>
   );
 }

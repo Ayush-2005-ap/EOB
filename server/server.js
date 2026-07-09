@@ -30,7 +30,18 @@ app.get("/", (req, res) => {
   res.send("Backend running");
 });
 
-const PORT = process.env.PORT || 5050; // SAFE PORT using env fallback
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+const PORT = process.env.PORT || 5050;
+
+const server = app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});
+
+server.on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(`❌ Port ${PORT} is already in use. Kill the process using it first:`);
+    console.error(`   Run: lsof -ti :${PORT} | xargs kill -9`);
+    process.exit(1); // Exit so nodemon can cleanly restart after port is freed
+  } else {
+    throw err;
+  }
 });

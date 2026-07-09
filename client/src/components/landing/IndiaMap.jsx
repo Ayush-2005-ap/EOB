@@ -2,108 +2,251 @@ import { useState, useEffect } from "react";
 import { fetchRankings } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
+// Slug map: maps state names from TopoJSON to your DB slugs
+const NAME_TO_SLUG = {
+  "Andaman and Nicobar": "andaman_and_nicobar",
+  "Andhra Pradesh": "andhra_pradesh",
+  "Arunachal Pradesh": "arunachal_pradesh",
+  Assam: "assam",
+  Bihar: "bihar",
+  Chandigarh: "chandigarh",
+  Chhattisgarh: "chhattisgarh",
+  "Dadra and Nagar Haveli": "dadra_and_nagar_haveli",
+  "Daman and Diu": "daman_and_diu",
+  Delhi: "delhi",
+  Goa: "goa",
+  Gujarat: "gujarat",
+  Haryana: "haryana",
+  "Himachal Pradesh": "himachal_pradesh",
+  "Jammu and Kashmir": "jammu_and_kashmir",
+  Jharkhand: "jharkhand",
+  Karnataka: "karnataka",
+  Kerala: "kerala",
+  Lakshadweep: "lakshadweep",
+  "Madhya Pradesh": "madhya_pradesh",
+  Maharashtra: "maharashtra",
+  Manipur: "manipur",
+  Meghalaya: "meghalaya",
+  Mizoram: "mizoram",
+  Nagaland: "nagaland",
+  Odisha: "odisha",
+  Puducherry: "puducherry",
+  Punjab: "punjab",
+  Rajasthan: "rajasthan",
+  Sikkim: "sikkim",
+  "Tamil Nadu": "tamil_nadu",
+  Telangana: "telangana",
+  Tripura: "tripura",
+  "Uttar Pradesh": "uttar_pradesh",
+  Uttarakhand: "uttarakhand",
+  "West Bengal": "west_bengal",
+};
+
+const STATUS_COLORS = {
+  "Top Performer": "#059669",
+  "Acceleration Required": "#2563EB",
+  "Jump-Start Needed": "#DC2626",
+};
+
+const DEFAULT_COLOR = "#D1D5DB";
+const HOVER_OPACITY = "0.75";
+
 export default function IndiaMap() {
   const [hoveredState, setHoveredState] = useState(null);
   const [rankings, setRankings] = useState({});
+  const [geoData, setGeoData] = useState(null);
+  const [paths, setPaths] = useState([]);
   const navigate = useNavigate();
 
+  // Load rankings from backend
   useEffect(() => {
     const load = async () => {
-        try {
-            const data = await fetchRankings();
-            const map = {};
-            data.forEach(s => {
-                map[s.slug] = s;
-            });
-            setRankings(map);
-        } catch (err) {
-            console.error(err);
-        }
+      try {
+        const data = await fetchRankings();
+        const map = {};
+        data.forEach((s) => {
+          map[s.slug] = s;
+        });
+        setRankings(map);
+      } catch (err) {
+        console.error("Failed to load rankings:", err);
+      }
     };
     load();
   }, []);
 
-  const handleMouseOver = (e) => {
-    const slug = e.target.getAttribute("data-state");
-    if (slug && rankings[slug]) {
-      setHoveredState(rankings[slug]);
-    }
-  };
+  // Load India GeoJSON
+  useEffect(() => {
+    fetch(
+      "https://raw.githubusercontent.com/geohacker/india/master/state/india_state.geojson"
+    )
+      .then((r) => r.json())
+      .then((data) => setGeoData(data))
+      .catch((err) => console.error("Failed to load map data:", err));
+  }, []);
 
-  const handleClick = (e) => {
-    const slug = e.target.getAttribute("data-state");
-    if (slug && rankings[slug]) {
-      navigate(`/rankings/${slug}`);
-    }
-  };
+  // Project GeoJSON -> SVG paths using a simple equirectangular projection
+  useEffect(() => {
+    if (!geoData) return;
+
+    // India bounding box approx: lon 68-98, lat 6-38
+    const minLon = 68,
+      maxLon = 98,
+      minLat = 6,
+      maxLat = 38;
+    const SVG_W = 500,
+      SVG_H = 560;
+
+    const project = ([lon, lat]) => {
+      const x = ((lon - minLon) / (maxLon - minLon)) * SVG_W;
+      const y = SVG_H - ((lat - minLat) / (maxLat - minLat)) * SVG_H;
+      return [x, y];
+    };
+
+    const coordsToPath = (coords) => {
+      return coords
+        .map((ring) =>
+          ring
+            .map(([lon, lat], i) => {
+              const [x, y] = project([lon, lat]);
+              return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+            })
+            .join(" ") + " Z"
+        )
+        .join(" ");
+    };
+
+    const computed = geoData.features.map((feature) => {
+      const name =
+        feature.properties.NAME_1 ||
+        feature.properties.ST_NM ||
+        feature.properties.name ||
+        "";
+      const slug = NAME_TO_SLUG[name] || name.toLowerCase().replace(/\s+/g, "_");
+
+      let d = "";
+      const geom = feature.geometry;
+      if (geom.type === "Polygon") {
+        d = coordsToPath(geom.coordinates);
+      } else if (geom.type === "MultiPolygon") {
+        d = geom.coordinates.map((poly) => coordsToPath(poly)).join(" ");
+      }
+
+      return { name, slug, d };
+    });
+
+    setPaths(computed);
+  }, [geoData]);
 
   const getStateColor = (slug) => {
-      const state = rankings[slug];
-      if (!state) return "#F3F4F6"; // Gray-100
-      if (state.status === "Top Performer") return "#059669"; // Green-600
-      if (state.status === "Acceleration Required") return "#2563EB"; // Blue-600
-      if (state.status === "Jump-Start Needed") return "#DC2626"; // Red-600
-      return "#9A4020"; // Default
+    const state = rankings[slug];
+    if (!state) return DEFAULT_COLOR;
+    return STATUS_COLORS[state.status] || "#9A4020";
+  };
+
+  const handleMouseOver = (slug, name) => {
+    const state = rankings[slug];
+    setHoveredState(state ? state : { name, slug, noData: true });
   };
 
   return (
-    <div className="relative w-full max-w-2xl mx-auto">
-      <svg
-        viewBox="0 0 800 800"
-        className="w-full h-auto cursor-pointer filter drop-shadow-2xl"
-        onMouseOver={handleMouseOver}
-        onMouseOut={() => setHoveredState(null)}
-        onClick={handleClick}
-      >
-        {/* Simplified Map Paths with Dynamic Colors */}
-        <path data-state="haryana" fill={getStateColor("haryana")} className="transition-colors duration-300 hover:opacity-80" d="M200.46,308.91c-.12,1.16-.22,2.06.09,3.04.57-.4,1.13-.41,1.65-.42.3,0,.61-.02.96-.09.33-.07.61-.17.89-.26.6-.2,1.22-.41,2.13-.34l.41.03.08.17c1.19-.76,2.05-1.53,2.53-2.67.16-.4.39-.75.6-1.09.37-.59.69-1.09.65-1.68-.04-.68-.41-1.32-.82-1.92-.11-.17-.35-.38-.58-.59-.42-.38-.89-.81-1.08-1.36-.26-.77.11-1.49.41-2.07.2-.39.41-.8.33-1.04-.12-.35-.95-.51-1.56-.62-.26-.05-.51-.1-.73-.16-.47-.13-1.12-.22-1.8-.31-1.5-.2-3.04-.41-4-1.15-1.44-1.11-.4-2.66.1-3.41.74-1.1.76-1.3.37-2.7-.05-.17-.1-.35-.16-.53-.29-.91-.66-2.05-.19-3.08.29-.64.82-1.06,1.3-1.43.28-.22.54-.42.71-.64.58-.73.42-1.1.05-1.99l-.16-.39c-.41-1.04-.47-2.01-.52-2.95-.02-.31-.04-.63-.07-.95-.04-.36-.09-.7-.15-1.04-.11-.66-.22-1.34-.18-2.18.06-1.17.51-1.82.99-2.51.16-.23.33-.47.5-.76.26-.44.62-.8.96-1.14.33-.33.63-.63.77-.93.2-.43.13-1.06.05-1.73-.07-.64-.15-1.3-.01-1.94.33-1.52,2.02-2.14,3.38-2.63.46-.17.9-.33,1.27-.51.54-.28.81-.43,1.05-.81.13-.2.17-.49.22-.82.03-.22.07-.45.13-.68-.07-.02-.13-.06-.21-.07-.22-.03-.61-.01-.99.01-1.13.07-2.54.15-3.23-.85-.33-.47-.3-1.12-.28-1.68,0-.27.02-.57-.02-.72-.17-.67-.68-1.48-1.32-2.11-.23-.22-.56-.42-.91-.63-.57-.34-1.21-.72-1.67-1.36-1.22-1.67-1.71-2.32-3.52-2.27.05.17.09.35.15.53.13.4.25.8.34,1.21.14.63.14,1.24.13,1.84,0,.69,0,1.34.21,1.92.12.31.28.6.44.89.46.84,1.04,1.9.44,3.24-.85,1.92-3.64,2.01-5.28,1.97-.58.72-1.66,1.34-2.23,1.59-.34.15-.82.24-1.37.33-.42.07-1.2.21-1.37.34-.01.07.08.57.13.84.1.56.22,1.2-.02,1.75-.4.88-1.11,1.16-1.75,1.41-.22.09-.45.17-.68.3-1.09.59-1.06.69-.65,1.93.06.19.13.39.19.6l.19.62-.61.24c-.77.31-1.8.25-2.71.2-.44-.02-.73-.01-1.31-.07-.18-.02-.52-.05-.7-.04-.09.15-.19.31-.39.41-.12.06-.21.12-.3.17-.47.29-.9.51-1.79.33-.3-.06-.56-.14-.81-.22-.24-.08-.48-.16-.78-.19-2.24-.27-2.88.54-3.18,1.28-.41,1-1.04,1.66-1.8,1.92-.19.06-.43.11-.71.11-.42,0-.93-.11-1.51-.46-.76-.45-1.02-1.1-1.25-1.67-.07-.18-.15-.37-.25-.56-.15-.28-.55-1.04-.87-1.36-.16-.16-.4-.28-.66-.4-.47-.23-1.06-.53-1.41-1.19-.27-.5-.34-.91-.39-1.21-.06-.38-.07-.44-.71-.67-.56-.2-1.1-.13-1.78-.03l-.32.04c-.62.08-1.34-.08-2.02-.23-.93-.21-1.61-.33-2.03-.14.11.15.19.3.24.44.39,1.12-.42,2.55-1.07,3.69-.2.36-.48.85-.51,1-.03.34.1.77.22,1.22.22.79.47,1.67.1,2.6-.29.72-.81,1.19-1.27,1.61-.46.42-.77.72-.87,1.12.11,0,.23.02.35.02,1.04.07,2.47.18,3.12-.26.12-.08.3-.38.44-.59.13-.2.25-.4.37-.55,1.38-1.69,2.79-1.91,4.56-.71.86.59,1.71.98,2.6,1.4l.22.1c.48.22.86.58,1.24.92.36.33.73.67,1.04.74.31.07.7-.1,1.12-.29.35-.15.71-.31,1.11-.37.98-.17,1.59.17,1.93.48.71.65.98,1.81.83,3.55-.06.7-.2,1.35-.33,1.98-.18.85-.35,1.66-.32,2.53.03.78.32,1.44.62,2.15.27.61.54,1.24.66,1.98l.1.6-.58.19c-.41.13-.45.61-.39,1.7,0,.16.02.31.02.46.13.19.26.41.39.64.21.37.43.75.65.96.39.35,1.14.42,1.94.49.95.09,1.94.17,2.69.76.42.33.67.88.89,1.36.09.19.17.38.26.52.21.34.49.68.78,1.03.46.56.94,1.14,1.23,1.8.73,1.65-.22,2.35-.78,2.76-.42.31-.58.45-.6.77-.06.88.7,3.16,1.25,3.76.37.4.88.6,1.4.68-.25-.36-.52-.81-.51-1.41.02-1.31,1.01-1.97,1.73-2.44.19-.13.39-.25.55-.39.49-.4.48-.63.45-1.42,0-.18-.01-.37-.01-.58v-.3c-.02-.81-.06-2.49,1.67-2.59,1.22-.08,2.36,1.24,2.89,1.87l.24.29c.93,1.12.96,1.17,2.45.82.64-.15,1.24-.67,1.87-1.23.83-.73,1.68-1.48,2.81-1.53l.56-.02.15.54c.35,1.23.72,3.08.55,4.89l-.07.65Z"/>
-        <path data-state="jammu_and_kashmir" fill={getStateColor("jammu_and_kashmir")} className="transition-colors duration-300 hover:opacity-80" d="M150.97,208.22c3.26.91,4.22,3.91,7.93,4.4,1.08.14,1.95.05,2.96-.02.23-.02,1.15-.75,1.35-.68.81.29.76,1.33,1.29,2,2.04,2.58,5.13,1.89,7.4,4.07.74.71,1.56,1.64,2.08,2.63.28-.07.55-.19.84-.32.81-.36,1.82-.82,3-.07.17.11.32.24.46.38.49-.78,1.32-.99,2.09-1.17.91-.21,1-.32,1.32-1.46.04-.16.04-.37.04-.6,0-.27,0-.57.08-.88.12-.5.34-.96.56-1.4.16-.32.31-.65.42-.99l.16-.49c.26-.75.48-1.4.34-2.06-.07-.35-.27-.71-.47-1.06-.33-.62-.68-1.25-.45-1.94.15-.44.49-.77,1.05-1.03,1.34-.6,2.49-.04,3.42.41.85.42,1.41.66,1.99.4.45-.2,1.26-1.38,1.96-2.87.67-1.43,1.2-1.58,2.25-1.58.04,0,.08,0,.12,0,.02,0,.04,0,.07,0-.2-.86-.5-1.7-.92-2.75-.36-.9-.89-1.86-1.57-2.84-1.26-1.82-1.29-2.78-.14-4.69.35-.58.48-1.06.37-1.42-.19-.66-1.19-1.15-2.16-1.62-.47-.23-.93-.46-1.34-.71-.75-.47-2.67-2.27-2.9-3.37-.08-.41.01-.82.1-1.18.05-.22.14-.58.08-.67-.31-.48-1.01-.44-1.96-.32-.23.03-.46.05-.66.06-1.88.11-3.02-.92-3.79-1.83l-.24-.28c-1.48-1.72-3.15-3.68-2.33-6.42.09-.3.18-.53.25-.71.02-.06.04-.11.06-.15-.16-.13-.48-.34-.72-.51l-.16-.11c-.69-.47-1.34-.91-2.02-.74-.03,0-.12.08-.18.13-.16.13-.38.31-.69.4-1.42.41-2.32-.44-3.05-1.12-.2-.19-.41-.38-.63-.56-.87-.69-1.82-1.09-2.83-1.52-.35-.15-.7-.3-1.06-.47-.79-.37-1.35-.99-1.89-1.6-.64-.72-1.19-1.33-2.03-1.47-.31-.05-.71.03-1.14.12-.6.12-1.27.26-1.94.09-.2-.05-.37-.12-.53-.18-.06.22-.15.44-.31.65-.65.86-2.6.25-3.5,1.13-.9.87-.49,1.62-.86,2.62-1.07,2.85-3.25,3.5-6.13,3.71-3.56.25-3.8,1.6-2.35,4.7.64,1.37.94,2.56,1.07,4.04.16,1.74-.7,3.46-.67,4.95.06,2.88,2.71,5.77,3.25,8.66.4,2.18-.57,4.1-1.32,5.98-1.64,4.11,1.14,3.39,4.59,4.35Z"/>
-        <path data-state="uttar_pradesh" fill={getStateColor("uttar_pradesh")} className="transition-colors duration-300 hover:opacity-80" d="M269.02,296.96c-.61-.65-1.31-1.44-2.1-1.87-.51-.28-2.19-1.07-2.74-1-.9.11-.93,1.59-1.74,1.78-.58.13-2.79-2.27-3.31-2.67-.41-.32-.8-.65-1.18-.99-.53.09-1.04.24-1.5.55-.37.25-.54.58-.74.96-.33.63-.78,1.49-2.21,1.5h-.01c-1.26,0-2.27-.66-3.16-1.25-.54-.36-1.06-.69-1.55-.84-.28-.08-.55-.13-.81-.17-.51-.09-1.08-.19-1.7-.5-.23-.12-.47-.27-.71-.43-.35-.22-.7-.46-1-.54-.68-.19-1.65-.28-2.42.33l-.39.32c-.99.82-1.77,1.46-3.72.7-2.05-.8-2.23-2.66-2.38-4.3-.12-1.27-.24-2.48-1.17-3.18-.14-.11-.34-.24-.58-.4-1.44-.96-3.86-2.58-3.07-4.45.24-.57.87-.89,1.48-1.2.26-.13.59-.3.69-.41.22-.22.71-.77.49-1.18-.15-.28-.31-.31-.93-.33-.46-.01-1.03-.03-1.55-.38-.42-.28-.63-.71-.8-1.05-.09-.18-.17-.35-.26-.45-.62-.69-1.36-.75-2.42-.78-.36,0-.79-.05-1.26-.09-1.17-.11-2.77-.26-3.41.2-.19.14-.38.57-.55.95-.23.52-.49,1.12-.95,1.53-1.6,1.42-2.99,1.11-3.67.79-1.44-.65-2.46-2.52-2.44-4.42v-.52c.04-.96.06-1.65-.41-2.35-.66-.97-1.83-2.05-3.57-3.3l-.54-.39.35-.56c.7-1.11,1.94-1.88,3.14-2.63.54-.34,1.06-.66,1.47-.98.43-.33.56-.62.54-.74-.01-.09-.17-.29-.68-.5-.21-.08-.59-.05-.96-.01-.5.05-1.06.1-1.62-.07-.25-.08-.45-.17-.64-.28,0,.05-.02.1-.03.15-.06.43-.13.91-.42,1.36-.45.73-1.04,1.03-1.6,1.32-.43.22-.91.4-1.43.58-1.09.39-2.32.84-2.48,1.6-.09.41-.03.93.04,1.48.09.79.2,1.69-.17,2.48-.24.53-.66.94-1.06,1.34-.3.3-.58.58-.74.86-.19.32-.38.59-.56.85-.42.61-.7,1.01-.74,1.78-.03.68.06,1.26.16,1.88.06.37.12.74.16,1.13.03.35.05.68.07,1.01.05.9.1,1.69.42,2.52l.15.36c.39.95.84,2.03-.25,3.41-.28.35-.61.61-.94.87-.38.3-.73.58-.88.9-.24.53.02,1.35.25,2.06.06.2.13.4.18.58.48,1.71.47,2.34-.54,3.84-.75,1.12-.7,1.32-.43,1.54.66.51,2.08.7,3.33.87.73.1,1.41.19,1.97.34.19.05.4.09.63.13.94.18,2.23.43,2.62,1.54.29.81-.1,1.56-.41,2.16-.19.38-.4.77-.33.98.07.2.41.51.69.76.29.26.59.53.8.84.52.77,1,1.62,1.06,2.63.06,1.04-.44,1.82-.87,2.51-.18.29-.37.58-.49.88-.71,1.71-2.07,2.71-3.37,3.51.17,1.03,0,2.04-.15,2.97-.05.32-.11.65-.15.97-.11.9-.05,2.18.22,2.66.3.54.89.68,1.83.86.73.14,1.56.31,2.22.84,1.28,1.03.7,2.09.36,2.72-.11.19-.22.39-.29.62-.16.48-.11,1.06-.05,1.68.05.56.1,1.14,0,1.73-.11.67-.4,1.19-.66,1.65-.21.38-.4.7-.46,1.06-.08.45-.03.68.04.75.06.05.32.21,1.38-.02.64-.14,1.11-.29,1.6-.67.1-.08.15-.14.23-.23.16-.2.37-.46.88-.62.62-.19,1.23,0,1.72.16.29.09.59.18.76.16.11-.01.3-.11.47-.19.21-.1.43-.21.64-.26.28-.08,2.76-.75,4.15.03.45.25.71.65.91.96.13.21.26.4.39.48.18.1.46.1.78.1.32,0,.67,0,1.04.09.8.22.98.27,1.23.65.05.07.11.17.34.37.63.58.99,1.07,1.25,1.42.5.67.59.79,2.18.64,1.45-.14,2.99-.21,4.46.2,2.28.63,3.8,2.03,4.17,3.84.47,2.32-.37,3.39-1.19,4.43-.34.43-.69.88-.99,1.45-.5.95-.09,1.88.39,2.96.47,1.06,1,2.27.48,3.52-.26.63-1.19,1.23-2.57,2.08-.27.16-.51.31-.68.43-.59.4-1.21.67-1.76.91-1.11.49-1.75.8-2.02,1.57-.13.36-.15.66-.17.98-.04.67-.1,1.49-1.4,2.14-.55.27-1.19.4-1.8.52-1.39.28-2.27.53-2.63,1.58-.17.51.01.87.36,1.48.35.61.78,1.37.49,2.36-.16.52-.46.86-.7,1.13-.27.3-.43.49-.45.9,0,.1.06.29.12.47.14.41.34.96.11,1.59-.27.75-1.19,1.71-2.07,2.65-.45.47-.87.91-1.09,1.22-1.13,1.52-1.57,3.09-1.2,4.3.32,1.04,1.2,1.83,2.62,2.34.69.25,1.24.2,1.87.15.39-.03.78-.06,1.2-.04,1.55.09,2.08.93,2.7,1.9.21.34.45.72.78,1.14.82,1.06,3.27,2.91,4.58,2.77.29-.03.48-.17.61-.45.11-.22-.01-.82-.1-1.25-.08-.41-.16-.79-.14-1.14.02-.46.15-.89.27-1.32.13-.42.25-.82.21-1.13-.11-.89-.54-1.19-1.25-1.67-.3-.2-.61-.42-.92-.69l-.11-.1c-.52-.45-.66-.58-.74-1-.02-.08-.04-.21-.17-.51-.16-.39-.22-.86-.28-1.32-.06-.43-.12-.97-.27-1.16-.34-.47-1.64-.86-2.9-.89h-.6s-.08-.61-.08-.61c-.14-.98.14-1.78.38-2.48.25-.72.46-1.35.27-2.14-.06-.27-.18-.5-.28-.73-.29-.64-.66-1.43-.15-2.54.55-1.19,1.43-1.37,2.07-1.51.32-.06.59-.12.85-.27.23-.14.42-.34.63-.55.52-.54,1.24-1.28,2.73-.8,1.52.5,1.59,1.37,1.65,2.14.02.25.04.54.12.88q.31,1.3,1.69,1.54c1.54.27,2.28.16,3.4-.48.29-.16.54-.35.78-.53.67-.49,1.45-1.04,2.6-1.01,1.71.03,2.98,1.12,4.21,2.16,1.06.9,2.06,1.76,3.21,1.79,1.1.02,1.48-.87,2-2.93.43-1.72.92-3.66,2.75-4.28,1.45-.49,2.51.55,3.29,1.31.38.37.75.73,1.07.87.1.04.13.04.31,0,.29-.06.78-.15,1.39.23,1.12.7,1.58,1.84,1.98,2.84.57,1.42.94,2.34,2.81,2.25.11-.03.55-.26.87-.43,1.19-.63,2.53-1.34,3.48-.8.32.18.7.57.74,1.41l.03.75h-.75s-.17.03-.25.06c-.08.03-.17.06-.27.08-.14.77-.07,1.61.02,2.5.01.14.03.29.04.43.45-.06.94-.09,1.45-.12,1.18-.07,2.65-.16,3.1-.66.26-.29.22-.87.17-1.48-.03-.38-.06-.77-.02-1.16.13-1.27.42-2.83,1.54-3.66.72-.54,1.69-.7,2.87-.48,1.44.27,2.02,1.15,2.53,1.94.33.5.64.98,1.19,1.34.66.44,1.5.48,2.39.52.8.04,1.62.08,2.4.41,1.31.55,1.64,1.65,1.91,2.53.17.55.31,1.03.65,1.3.32.26.89.19,1.5.12.57-.06,1.16-.13,1.73.02.57.16,1.21.75,2.21,1.69.7.66,2.32,2.21,2.81,2.05.05-.02.2-.18.3-.73l.11-.63.63.05c.59.04,1.01.24,1.35.39.32.14.54.25.89.24.25,0,.53-.11.82-.22.5-.19,1.12-.42,1.85-.24,2.1.52,1.59,2.73,1.25,4.19-.14.59-.26,1.14-.26,1.56,0,.48.08.96.15,1.43.17,1.09.36,2.32-.46,3.54-.31.46-.63.75-.86.96-.1.09-.24.22-.26.27,0,0-.01.18.33.81.28.51.4.65.84.81l.05-.13c.46.17.77.42,1.05.64.33.26.54.43.93.46.91.09,1.21.24,1.75.55.13.07.27.16.46.26,1.27.68,2.47-.72,3.79-2.48.16-.22.32-.42.46-.6.1-.12.22-.25.35-.38l-.23-.02c.03-.42.02-.86.01-1.31-.02-1.37-.05-2.91.9-4.19.54-.72,1.2-1.28,1.83-1.81.91-.77,1.78-1.49,2.14-2.64.17-.56.01-.74-1.16-1.28-.3-.14-.6-.28-.88-.44-1.72-1-2.41-1.84-1.74-3.88.43-1.31.51-1.67-.06-2.91l-.17-.36c-.34-.71-.69-1.44-.63-2.4.19-3,2.22-3.54,4.01-4.03.48-.13.98-.26,1.48-.45,1.17-.44,1.83-.99,2.29-1.89.17-.33.26-.61.34-.85.28-.83.56-1.41,1.81-1.87l.47-.17c.65-.22,1.26-.43,1.68-.85.14-.13.26-.4.39-.66.21-.44.44-.93.89-1.25.92-.65,2.01-.32,2.76-.01.48.2.82.44,1.12.65.37.26.62.44,1.03.46.55.03,1.14-.16,1.75-.36.36-.12.72-.24,1.09-.32.41-.09.79-.11,1.17-.12.26-.01.51-.02.77-.06,1.09-.17,1.04-.59,1.02-.77-.13-1.1-.97-1.41-2.33-1.79-.56-.16-1.13-.29-1.69-.42-.65-.15-1.3-.3-1.94-.49-.32-.09-.72-.18-1.16-.27-1.72-.37-3.86-.82-4.69-2.2l-.32-.54.5-.38c.77-.59.98-1.04.86-1.87-.01-.09-.05-.18-.08-.28-.12-.34-.28-.79-.13-1.31.14-.52.54-.83.83-1.06.1-.08.25-.2.28-.25.06-.19.03-.38-.11-.59-.67-1.01-3.23-1.79-4.39-1.87l-.68-.05.02-.68c.08-2.53,2.6-2.78,3.55-2.87.14-.01.29-.02.45-.04.51-.03,1.21-.08,1.52-.3.12-.08.22-.25.34-.45.19-.31.42-.69.87-.95.5-.3,1.08-.29,1.6-.28.22,0,.55,0,.65-.04-.11-.19-.81-1.4-1.41-2.28-.46-.69-1.24-.96-2.08-1.25-.81-.29-1.66-.58-2.28-1.28-.33-.37-.56-.85-.78-1.32-.16-.35-.32-.67-.49-.91-1.17-1.6-1.54-2.94-1.1-4,.33-.79,1.09-1.18,1.77-1.53.2-.1.4-.2.58-.32.57-.36.65-.55.65-.55-.08-.07-.66-.4-1.01-.6-.49-.28-1.07-.61-1.51-1.05-.38.26-.75.54-1.33.76-1.34.51-1.82-.56-3.2-1.04-2.44-.85-3.41.71-5.61,1.47-1.67.57-2.87-.22-4.7-.46-1.29-.17-2.55.13-3.86.03-3.66-.3-3.98-1.82-3.34-5.09-1.17-.47-3.14.01-4.45.02-1.22-.95-2.46-1.47-3.5-2.67-.92-1.07-1.13-1.24-2.66-1.74-.98-.32-1.46-.52-2.44-.2-1.93.63-2.96.93-4.62-.65-1.25-1.19-1.96-2.32-3.65-2.96-1.17-.44-2.38-.17-3.34-1.15-.93-.95-.67-2-1.15-3.15-.56-1.33-2.21-1.64-3.49-1.75-.84-.07-2.25.04-2.95-.5-.64-.49-1.16-2.01-1.8-2.68Z"/>
-        {/* ... Include all other paths normally found in the IndiaMap component with data-state corresponding to their slug */}
-      </svg>
+    <div className="relative w-full max-w-md mx-auto select-none">
+      {/* Legend */}
+      <div className="flex flex-wrap gap-3 mb-3 text-xs font-semibold">
+        {Object.entries(STATUS_COLORS).map(([label, color]) => (
+          <span key={label} className="flex items-center gap-1.5">
+            <span
+              className="inline-block w-3 h-3 rounded-full"
+              style={{ background: color }}
+            />
+            {label}
+          </span>
+        ))}
+        <span className="flex items-center gap-1.5">
+          <span
+            className="inline-block w-3 h-3 rounded-full"
+            style={{ background: DEFAULT_COLOR }}
+          />
+          No Data
+        </span>
+      </div>
 
+      {!geoData && (
+        <div className="flex items-center justify-center h-64 text-gray-400 text-sm">
+          Loading map…
+        </div>
+      )}
+
+      {geoData && (
+        <svg
+          viewBox="0 0 500 560"
+          className="w-full h-auto cursor-pointer drop-shadow-xl"
+          onMouseLeave={() => setHoveredState(null)}
+        >
+          {paths.map(({ name, slug, d }) =>
+            d ? (
+              <path
+                key={slug}
+                d={d}
+                fill={getStateColor(slug)}
+                stroke="#fff"
+                strokeWidth="0.8"
+                className="transition-opacity duration-200"
+                style={{ opacity: hoveredState?.slug === slug ? HOVER_OPACITY : 1 }}
+                onMouseOver={() => handleMouseOver(slug, name)}
+                onClick={() => {
+                  if (rankings[slug]) navigate(`/rankings/${slug}`);
+                }}
+              />
+            ) : null
+          )}
+        </svg>
+      )}
+
+      {/* Hover Tooltip */}
       {hoveredState && (
-        <div className="absolute top-0 right-0 md:top-4 md:right-4 bg-white/90 backdrop-blur-md p-6 shadow-2xl rounded-2xl border border-gray-100 min-w-[220px] transform transition-all duration-300 animate-in fade-in zoom-in-95">
-          <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="font-black text-gray-900 text-xl tracking-tight leading-none mb-1">{hoveredState.name}</h3>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#9A4020]">National Compliance</span>
-              </div>
-              <div className="bg-[#9A4020]/10 p-2 rounded-lg">
-                  <span className="text-[#9A4020] font-mono font-bold text-lg">#{hoveredState.rankNumber}</span>
-              </div>
-          </div>
-          
-          <div className="space-y-4">
-              <div>
-                <div className="flex justify-between text-xs font-bold text-gray-500 uppercase tracking-tighter mb-1">
-                    <span>Performance Score</span>
+        <div className="absolute top-0 right-0 bg-white/95 backdrop-blur-md p-5 shadow-2xl rounded-2xl border border-gray-100 min-w-[200px] pointer-events-none animate-in fade-in zoom-in-95 duration-150">
+          <h3 className="font-black text-gray-900 text-lg leading-tight mb-1">
+            {hoveredState.name}
+          </h3>
+          {hoveredState.noData ? (
+            <p className="text-xs text-gray-400 font-medium">No ranking data</p>
+          ) : (
+            <>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9A4020]">
+                Rank #{hoveredState.rankNumber}
+              </span>
+              <div className="mt-3 space-y-2">
+                <div>
+                  <div className="flex justify-between text-xs font-bold text-gray-500 uppercase mb-1">
+                    <span>Score</span>
                     <span>{hoveredState.score}</span>
-                </div>
-                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div 
-                        className="h-full bg-green-500 transition-all duration-500 rounded-full"
-                        style={{ width: hoveredState.score }}
-                    ></div>
-                </div>
-              </div>
-
-              <div className="pt-2 border-t border-gray-50">
-                  <span className="text-[10px] font-black uppercase text-gray-400 block mb-1">Status Classification</span>
-                  <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${
-                             hoveredState.status === "Top Performer" ? "bg-green-500" : 
-                             hoveredState.status === "Acceleration Required" ? "bg-blue-500" : "bg-red-500"
-                        }`}></div>
-                        <span className="text-sm font-bold text-gray-700">{hoveredState.status}</span>
                   </div>
+                  <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-green-500 rounded-full transition-all duration-500"
+                      style={{ width: hoveredState.score }}
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 pt-1 border-t border-gray-50">
+                  <div
+                    className="w-2 h-2 rounded-full"
+                    style={{
+                      background:
+                        STATUS_COLORS[hoveredState.status] || "#9A4020",
+                    }}
+                  />
+                  <span className="text-sm font-bold text-gray-700">
+                    {hoveredState.status}
+                  </span>
+                </div>
               </div>
-          </div>
-          
-          <div className="mt-6 flex items-center justify-between text-[10px] font-bold text-gray-400 animate-pulse">
-              <span>CLICK TO VIEW DETAILS</span>
-              <span>→</span>
-          </div>
+              <div className="mt-4 text-[10px] font-bold text-gray-400 animate-pulse">
+                CLICK TO VIEW DETAILS →
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>
