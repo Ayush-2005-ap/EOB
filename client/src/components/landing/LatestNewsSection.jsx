@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchNews } from "../../services/api";
+import { ArrowRight, ExternalLink } from "lucide-react";
 
 export default function LatestNewsSection() {
   const [news, setNews] = useState([]);
@@ -11,62 +12,88 @@ export default function LatestNewsSection() {
 
   const loadNews = async () => {
     try {
-        const data = await fetchNews();
-        setNews(data);
-        setLoading(false);
+      const data = await fetchNews();
+      setNews(data);
     } catch (err) {
-        console.error("News fetch failed", err);
-        setLoading(false);
+      console.error("News fetch failed", err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) return <div className="text-center py-20 text-gray-400 font-bold animate-pulse">Fetching latest updates...</div>;
+  if (loading) {
+    return (
+      <section className="bg-gray-50 py-20">
+        <div className="max-w-7xl mx-auto px-6 text-center text-gray-400 text-sm animate-pulse">
+          Fetching latest updates…
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <div className="container mx-auto px-6 py-16 max-w-5xl">
-      <div className="flex items-center gap-4 mb-10">
-          <div className="h-px bg-gray-200 flex-1"></div>
-          <h1 className="text-4xl font-black text-gray-900 tracking-tight">Latest <span className="text-[#9A4020]">Intelligence</span></h1>
-          <div className="h-px bg-gray-200 flex-1"></div>
-      </div>
+    <section className="bg-gray-50 py-20 md:py-24">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Section header */}
+        <div className="mb-12">
+          <span className="inline-block text-[#E88C30] text-xs font-black uppercase tracking-widest mb-3">
+            Latest Updates
+          </span>
+          <h2 className="text-3xl md:text-4xl font-black text-[#0F1E3C] leading-tight">
+            Policy Intelligence
+          </h2>
+          <div className="w-12 h-[3px] bg-[#E88C30] mt-3 rounded-full" />
+        </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
         {news.length === 0 ? (
-            <div className="col-span-2 text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100 italic text-gray-400">
-                No active announcements at this moment.
-            </div>
-        ) : news.map(item => (
-          <div
-            key={item._id}
-            className="group relative bg-white rounded-2xl p-8 border border-gray-100 hover:border-[#9A4020]/30 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(154,64,32,0.1)] overflow-hidden"
-          >
-            {/* Hover Accent */}
-            <div className="absolute top-0 left-0 w-1 h-full bg-[#9A4020] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-            <div className="flex justify-between items-start mb-4">
-                <span className="bg-[#9A4020]/5 text-[#9A4020] text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">{item.source || "OFFICIAL"}</span>
-                <span className="text-xs font-bold text-gray-400 font-mono">{item.date}</span>
-            </div>
-
-            <h2 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#9A4020] transition-colors leading-tight">
-              {item.title}
-            </h2>
-
-            <p className="text-gray-500 leading-relaxed line-clamp-3 mb-6 text-sm">
-              {item.description}
-            </p>
-
-            <a
-              href={item.url || "#"}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-gray-900 hover:text-[#9A4020] transition-colors group-hover:gap-4 duration-300"
-            >
-              Read Full Intelligence <span>→</span>
-            </a>
+          <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200 text-gray-400 text-sm italic">
+            No active announcements at this moment.
           </div>
-        ))}
+        ) : (
+          <div className="grid md:grid-cols-2 gap-6">
+            {news.map((item) => (
+              <div
+                key={item._id}
+                className="group bg-white border border-gray-100 rounded-2xl p-7 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 relative overflow-hidden"
+              >
+                {/* Left accent bar */}
+                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#E88C30] opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-l-2xl" />
+
+                {/* Meta row */}
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#E88C30] bg-[#E88C30]/8 px-2.5 py-1 rounded-full">
+                    {item.source || "Official"}
+                  </span>
+                  <span className="text-xs font-bold text-gray-300 font-mono">
+                    {item.date}
+                  </span>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-xl font-bold text-[#0F1E3C] mb-3 leading-snug group-hover:text-[#E88C30] transition-colors">
+                  {item.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-5">
+                  {item.description}
+                </p>
+
+                {/* Read link */}
+                <a
+                  href={item.url || "#"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-[#0F1E3C] hover:text-[#E88C30] transition-colors group/link"
+                >
+                  Read Full Report
+                  <ExternalLink size={11} className="group-hover/link:translate-x-0.5 transition-transform" />
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
 }
