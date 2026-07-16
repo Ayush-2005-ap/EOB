@@ -27,6 +27,7 @@ export default function ResourcesHome() {
   // Selection states
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedState, setSelectedState] = useState("all");
+  const [initialView, setInitialView] = useState(true);
 
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [stateDropdownOpen, setStateDropdownOpen] = useState(false);
@@ -106,7 +107,11 @@ export default function ResourcesHome() {
             {categoryDropdownOpen && (
               <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg z-20 overflow-hidden">
                 <button
-                  onClick={() => { setSelectedCategory("all"); setCategoryDropdownOpen(false); }}
+                  onClick={() => {
+                    setSelectedCategory("all");
+                    setInitialView(false);
+                    setCategoryDropdownOpen(false);
+                  }}
                   className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                 >
                   All Categories
@@ -116,7 +121,8 @@ export default function ResourcesHome() {
                     key={cat.value}
                     onClick={() => {
                       setSelectedCategory(cat.value);
-                      setSelectedState("all"); // clear state filter to prevent empty results
+                      setSelectedState("all");
+                      setInitialView(false);
                       setCategoryDropdownOpen(false);
                     }}
                     className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
@@ -143,7 +149,11 @@ export default function ResourcesHome() {
             {stateDropdownOpen && (
               <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg z-20 overflow-hidden">
                 <button
-                  onClick={() => { setSelectedState("all"); setStateDropdownOpen(false); }}
+                  onClick={() => {
+                    setSelectedState("all");
+                    setInitialView(false);
+                    setStateDropdownOpen(false);
+                  }}
                   className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                 >
                   All States
@@ -153,7 +163,8 @@ export default function ResourcesHome() {
                     key={st}
                     onClick={() => {
                       setSelectedState(st);
-                      setSelectedCategory("all"); // clear category filter
+                      setSelectedCategory("all");
+                      setInitialView(false);
                       setStateDropdownOpen(false);
                     }}
                     className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
@@ -202,7 +213,11 @@ export default function ResourcesHome() {
             {isFilterActive && (
               <div className="text-sm text-gray-500">
                 <button 
-                  onClick={() => { setSelectedCategory("all"); setSelectedState("all"); }}
+                  onClick={() => {
+                    setSelectedCategory("all");
+                    setSelectedState("all");
+                    setInitialView(false);
+                  }}
                   className="text-[#0071BC] hover:text-[#C8793F] hover:underline"
                 >
                   Doing Business and related research
@@ -239,10 +254,10 @@ export default function ResourcesHome() {
 
             {/* List of Research Papers (WB Flat Style) */}
             <div className="space-y-10 pt-4">
-              {!isFilterActive ? (
+              {initialView ? (
                 <div className="bg-gray-50 border border-gray-200 rounded p-8 text-center">
                   <p className="text-[#002244] font-bold mb-1.5" style={{ fontFamily: "'Open Sans', sans-serif" }}>Select a Topic or Regional Profile</p>
-                  <p className="text-xs text-gray-505">Choose a research category or state focus to explore reports, briefings, and publications.</p>
+                  <p className="text-xs text-gray-500">Choose a research category or state focus to explore reports, briefings, and publications.</p>
                 </div>
               ) : filteredResources.length === 0 ? (
                 <p className="text-gray-400 italic text-sm">No research papers found matching this selection.</p>
@@ -314,9 +329,13 @@ export default function ResourcesHome() {
               <ul className="space-y-2.5">
                 <li>
                   <button
-                    onClick={() => { setSelectedCategory("all"); setSelectedState("all"); }}
+                    onClick={() => {
+                      setSelectedCategory("all");
+                      setSelectedState("all");
+                      setInitialView(false);
+                    }}
                     className={`text-sm text-left hover:text-[#C8793F] hover:underline cursor-pointer block ${
-                      selectedCategory === "all" && selectedState === "all" ? "text-gray-900 font-bold" : "text-[#0071BC]"
+                      selectedCategory === "all" && selectedState === "all" && !initialView ? "text-gray-900 font-bold" : "text-[#0071BC]"
                     }`}
                   >
                     All research topics
@@ -325,7 +344,11 @@ export default function ResourcesHome() {
                 {CATEGORIES.map((cat) => (
                   <li key={cat.value}>
                     <button
-                      onClick={() => { setSelectedCategory(cat.value); setSelectedState("all"); }}
+                      onClick={() => {
+                        setSelectedCategory(cat.value);
+                        setSelectedState("all");
+                        setInitialView(false);
+                      }}
                       className={`text-sm text-left hover:text-[#C8793F] hover:underline cursor-pointer block ${
                         selectedCategory === cat.value ? "text-gray-900 font-bold" : "text-[#0071BC]"
                       }`}
@@ -346,7 +369,11 @@ export default function ResourcesHome() {
                 {STATES.map((st) => (
                   <li key={st}>
                     <button
-                      onClick={() => { setSelectedState(st); setSelectedCategory("all"); }}
+                      onClick={() => {
+                        setSelectedState(st);
+                        setSelectedCategory("all");
+                        setInitialView(false);
+                      }}
                       className={`text-sm text-left hover:text-[#C8793F] hover:underline cursor-pointer block ${
                         selectedState === st ? "text-gray-900 font-bold" : "text-[#0071BC]"
                       }`}

@@ -21,8 +21,8 @@ function ResourcePreviewCard({ resource }) {
       className="group bg-white border border-gray-200 rounded-lg p-6 hover:border-[#C8793F] hover:shadow-md transition-all duration-200 flex flex-col"
     >
       {/* Icon */}
-      <div className="w-10 h-10 rounded flex items-center justify-center mb-4 text-[#0071BC] bg-[#0071BC]/10 group-hover:bg-[#0071BC]/20 transition-colors">
-        <IconDoc />
+      <div className="w-10 h-10 rounded flex items-center justify-center mb-4 bg-gray-50 border border-gray-100">
+        <img src="/publication_icon.png" alt="Publication Icon" className="w-6 h-6 object-contain" />
       </div>
 
       {resource.category && (
