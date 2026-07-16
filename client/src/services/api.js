@@ -82,35 +82,5 @@ export const deleteNews = async (id) => {
     return response.data;
 };
 
-// CHAT
-export const sendMessage = async (message, sessionId) => {
-  try {
-    const response = await api.post('/chat/message', {
-      message,
-      sessionId,
-    });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
-};
-
-export const getConversation = async (sessionId) => {
-  try {
-    const response = await api.get(`/chat/conversation/${sessionId}`);
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
-};
-
-export const deleteConversation = async (sessionId) => {
-  try {
-    const response = await api.delete(`/chat/conversation/${sessionId}`);
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
-};
 
 export default api;

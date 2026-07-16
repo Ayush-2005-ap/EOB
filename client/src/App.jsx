@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
-import ChatbotContainer from "./components/chatbot/ChatbotContainer";
+
 import AboutPage from "./pages/About";
 import LandingPage from "./pages/LandingPage";
 import ContactPage from "./pages/Contact";
@@ -36,7 +36,7 @@ function LayoutWrapper({ children }) {
 
       <div className="flex-1">{children}</div>
 
-      {!isAdminPage && <ChatbotContainer />}
+
       {!isAdminPage && <Footer />}
 
       <Toaster position="top-right" reverseOrder={false} />

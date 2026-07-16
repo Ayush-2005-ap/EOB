@@ -182,8 +182,8 @@ export default function IndiaMap() {
                 key={slug}
                 d={d}
                 fill={getStateColor(slug)}
-                stroke="#ffffff"
-                strokeWidth="0.8"
+                stroke="#000000"
+                strokeWidth="1"
                 className="transition-opacity duration-150"
                 style={{
                   opacity: hoveredState?.slug === slug ? HOVER_OPACITY : 1,

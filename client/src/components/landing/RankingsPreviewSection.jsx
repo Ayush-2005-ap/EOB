@@ -1,51 +1,33 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchRankings } from "../../services/api";
-import { TrendingUp, TrendingDown, Minus, MapPin } from "lucide-react";
+import { MapPin, TrendingUp, TrendingDown } from "lucide-react";
 
-const STATUS_CONFIG = {
-  "Top Performer": {
-    bg: "bg-emerald-50",
-    text: "text-emerald-700",
-    border: "border-emerald-100",
-    dot: "bg-emerald-500",
-  },
-  "Acceleration Required": {
-    bg: "bg-blue-50",
-    text: "text-blue-700",
-    border: "border-blue-100",
-    dot: "bg-blue-500",
-  },
-  "Jump-Start Needed": {
-    bg: "bg-red-50",
-    text: "text-red-700",
-    border: "border-red-100",
-    dot: "bg-red-500",
-  },
-};
-
-function RankingCard({ state, index }) {
+function RankingCard({ state, variant }) {
   const navigate = useNavigate();
-  const cfg = STATUS_CONFIG[state.status] || {
-    bg: "bg-gray-50",
-    text: "text-gray-500",
-    border: "border-gray-100",
-    dot: "bg-gray-400",
-  };
-
-  const scoreNum = parseInt(state.score) || 0;
+  const isTop = variant === "top";
 
   return (
     <div
       onClick={() => navigate(`/rankings/${state.slug}`)}
-      className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group"
+      className="bg-white border rounded-2xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group"
+      style={{ borderColor: isTop ? "#d1fae5" : "#fee2e2" }}
     >
       {/* Rank badge */}
       <div className="flex items-start justify-between mb-4">
-        <span className="text-[10px] font-black uppercase tracking-widest text-[#E88C30] bg-[#E88C30]/8 px-2.5 py-1 rounded-full">
-          #{index + 1} National
+        <span
+          className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
+          style={{
+            background: isTop ? "#ecfdf5" : "#fef2f2",
+            color: isTop ? "#059669" : "#dc2626",
+          }}
+        >
+          #{state.rankNumber} National
         </span>
-        <MapPin size={14} className="text-gray-300 group-hover:text-[#E88C30] transition-colors" />
+        <MapPin
+          size={14}
+          className="text-gray-300 group-hover:text-[#E88C30] transition-colors"
+        />
       </div>
 
       {/* State name */}
@@ -61,17 +43,30 @@ function RankingCard({ state, index }) {
         </div>
         <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className="h-full bg-[#E88C30] rounded-full transition-all duration-700"
-            style={{ width: state.score }}
+            className="h-full rounded-full transition-all duration-700"
+            style={{
+              width: state.score,
+              background: isTop
+                ? "linear-gradient(to right,#10b981,#34d399)"
+                : "linear-gradient(to right,#ef4444,#f87171)",
+            }}
           />
         </div>
       </div>
 
       {/* Status chip */}
       <span
-        className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full border ${cfg.bg} ${cfg.text} ${cfg.border}`}
+        className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full border"
+        style={{
+          background: isTop ? "#ecfdf5" : "#fef2f2",
+          color: isTop ? "#059669" : "#dc2626",
+          borderColor: isTop ? "#d1fae5" : "#fee2e2",
+        }}
       >
-        <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+        <span
+          className="w-1.5 h-1.5 rounded-full"
+          style={{ background: isTop ? "#10b981" : "#ef4444" }}
+        />
         {state.status}
       </span>
     </div>
@@ -79,7 +74,8 @@ function RankingCard({ state, index }) {
 }
 
 export default function RankingsPreviewSection() {
-  const [rankings, setRankings] = useState([]);
+  const [top3, setTop3] = useState([]);
+  const [bottom3, setBottom3] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -87,11 +83,12 @@ export default function RankingsPreviewSection() {
     const load = async () => {
       try {
         const data = await fetchRankings();
-        // Show top 6 by rankNumber
         const sorted = [...data]
-          .sort((a, b) => (a.rankNumber || 999) - (b.rankNumber || 999))
-          .slice(0, 6);
-        setRankings(sorted);
+          .filter((s) => s.rankNumber)
+          .sort((a, b) => a.rankNumber - b.rankNumber);
+
+        setTop3(sorted.slice(0, 3));
+        setBottom3(sorted.slice(-3));
       } catch (err) {
         console.error("Rankings preview failed:", err);
       } finally {
@@ -101,9 +98,21 @@ export default function RankingsPreviewSection() {
     load();
   }, []);
 
+  const SkeletonRow = () => (
+    <div className="grid md:grid-cols-3 gap-5">
+      {[...Array(3)].map((_, i) => (
+        <div
+          key={i}
+          className="bg-white rounded-2xl p-6 border border-gray-100 animate-pulse h-40"
+        />
+      ))}
+    </div>
+  );
+
   return (
     <section className="bg-gray-50 py-20 md:py-24">
       <div className="max-w-7xl mx-auto px-6">
+
         {/* Section header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
           <div>
@@ -121,25 +130,46 @@ export default function RankingsPreviewSection() {
           </p>
         </div>
 
-        {/* Cards grid */}
         {loading ? (
-          <div className="grid md:grid-cols-3 gap-5">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-2xl p-6 border border-gray-100 animate-pulse h-40"
-              />
-            ))}
-          </div>
-        ) : rankings.length === 0 ? (
-          <div className="text-center py-16 text-gray-400 text-sm">
-            Ranking data unavailable.
+          <div className="space-y-10">
+            <SkeletonRow />
+            <SkeletonRow />
           </div>
         ) : (
-          <div className="grid md:grid-cols-3 gap-5">
-            {rankings.map((state, i) => (
-              <RankingCard key={state._id} state={state} index={i} />
-            ))}
+          <div className="space-y-10">
+
+            {/* ── Top 3 ── */}
+            <div>
+              <div className="flex items-center gap-2 mb-5">
+                <TrendingUp size={16} className="text-emerald-500" />
+                <span className="text-sm font-black uppercase tracking-widest text-emerald-600">
+                  Top Performers
+                </span>
+                <div className="flex-1 h-px bg-emerald-100 ml-2" />
+              </div>
+              <div className="grid md:grid-cols-3 gap-5">
+                {top3.map((state) => (
+                  <RankingCard key={state._id} state={state} variant="top" />
+                ))}
+              </div>
+            </div>
+
+            {/* ── Bottom 3 ── */}
+            <div>
+              <div className="flex items-center gap-2 mb-5">
+                <TrendingDown size={16} className="text-red-400" />
+                <span className="text-sm font-black uppercase tracking-widest text-red-500">
+                  Need Acceleration
+                </span>
+                <div className="flex-1 h-px bg-red-100 ml-2" />
+              </div>
+              <div className="grid md:grid-cols-3 gap-5">
+                {bottom3.map((state) => (
+                  <RankingCard key={state._id} state={state} variant="bottom" />
+                ))}
+              </div>
+            </div>
+
           </div>
         )}
 
