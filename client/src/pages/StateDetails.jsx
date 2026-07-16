@@ -156,7 +156,7 @@ export default function StateDetails() {
           <div className="grid md:grid-cols-3 gap-6 pt-8">
             
             {/* Metric 1: National Rank */}
-            <div className="bg-[#F5F7FA] rounded p-6 border border-gray-200 flex items-start gap-4 transition hover:border-[#C8793F]">
+            <div className="bg-[#F5F7FA] rounded p-6 border border-gray-200 flex items-start gap-4 transition-all duration-300 hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1">
               <div className="w-10 h-10 bg-[#0071BC]/10 rounded flex items-center justify-center shrink-0 text-[#0071BC]">
                 <IconAward />
               </div>
@@ -171,7 +171,7 @@ export default function StateDetails() {
             </div>
 
             {/* Metric 2: Compliance Score */}
-            <div className="bg-[#F5F7FA] rounded p-6 border border-gray-200 flex items-start gap-4 transition hover:border-[#C8793F]">
+            <div className="bg-[#F5F7FA] rounded p-6 border border-gray-200 flex items-start gap-4 transition-all duration-300 hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1">
               <div className="w-10 h-10 bg-[#0071BC]/10 rounded flex items-center justify-center shrink-0 text-[#0071BC]">
                 <IconPercent />
               </div>
@@ -197,7 +197,7 @@ export default function StateDetails() {
             </div>
 
             {/* Metric 3: Groupings */}
-            <div className="bg-[#F5F7FA] rounded p-6 border border-gray-200 flex items-start gap-4 transition hover:border-[#C8793F]">
+            <div className="bg-[#F5F7FA] rounded p-6 border border-gray-200 flex items-start gap-4 transition-all duration-300 hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1">
               <div className="w-10 h-10 bg-[#00538A]/10 rounded flex items-center justify-center shrink-0 text-[#00538A]">
                 <IconInfo />
               </div>

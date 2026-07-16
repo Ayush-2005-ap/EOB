@@ -27,7 +27,7 @@ function RankingCard({ state, variant }) {
   return (
     <div
       onClick={() => navigate(`/rankings/${state.slug}`)}
-      className="bg-white border border-gray-200 rounded p-6 hover:border-[#C8793F] hover:shadow-md transition-all duration-200 cursor-pointer group"
+      className="bg-white border border-gray-200 rounded p-6 hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
     >
       {/* Rank badge */}
       <div className="flex items-start justify-between mb-4">
@@ -114,7 +114,7 @@ export default function RankingsPreviewSection() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <span className="w-6 h-0.5 bg-[#0071BC]" />
+              
               <span className="text-[#0071BC] text-xs font-bold uppercase tracking-[0.18em]">
                 National Compliance Index
               </span>

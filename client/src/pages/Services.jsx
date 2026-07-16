@@ -49,7 +49,7 @@ export default function Services() {
       <div className="container mx-auto px-6 max-w-6xl">
         <div className="text-center mb-16 max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-3 mb-3">
-            <span className="w-6 h-0.5 bg-[#0071BC]" />
+            
             <span className="text-[#0071BC] text-xs font-bold uppercase tracking-[0.18em]">
               Our Value Proposition
             </span>
@@ -79,7 +79,7 @@ export default function Services() {
               <motion.div 
                 key={i} 
                 variants={card} 
-                className="p-8 bg-white rounded border border-gray-200 shadow-sm hover:border-[#C8793F] transition-all duration-200 group"
+                className="p-8 bg-white rounded border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
               >
                 <div
                   className="w-12 h-12 rounded flex items-center justify-center mb-6 text-white"

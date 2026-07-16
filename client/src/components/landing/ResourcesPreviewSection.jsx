@@ -18,7 +18,7 @@ function ResourcePreviewCard({ resource }) {
   return (
     <Link
       to={`/resources/${resource._id}`}
-      className="group bg-white border border-gray-200 rounded-lg p-6 hover:border-[#C8793F] hover:shadow-md transition-all duration-200 flex flex-col"
+      className="group bg-white border border-gray-200 rounded-lg p-6 hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col"
     >
       {/* Icon */}
       <div className="w-10 h-10 rounded flex items-center justify-center mb-4 bg-gray-50 border border-gray-100">
@@ -71,7 +71,7 @@ export default function ResourcesPreviewSection() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <span className="w-6 h-0.5 bg-[#0071BC]" />
+              
               <span className="text-[#0071BC] text-xs font-bold uppercase tracking-[0.18em]">
                 Research Library
               </span>

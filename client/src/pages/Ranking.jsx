@@ -339,7 +339,7 @@ export default function Rankings() {
         {/* Page Header */}
         <div className="mb-10 text-center max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-3 mb-3">
-            <span className="w-6 h-0.5 bg-[#0071BC]" />
+            
             <span className="text-[#0071BC] text-xs font-bold uppercase tracking-[0.18em]">
               Methodology &amp; Scores
             </span>

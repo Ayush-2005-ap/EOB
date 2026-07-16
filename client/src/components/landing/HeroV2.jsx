@@ -64,7 +64,7 @@ export default function HeroV2() {
         <div>
           {/* Eyebrow — WB style uppercase label with left rule */}
           <div className="flex items-center gap-3 mb-5">
-            <span className="w-6 h-0.5 bg-[#0071BC]" />
+            
             <span className="text-[#0071BC] text-xs font-bold uppercase tracking-[0.18em]">
               Centre for Civil Society Initiative
             </span>
@@ -85,7 +85,7 @@ export default function HeroV2() {
             {stats.map(({ Icon, value, label, color }) => (
               <div
                 key={label}
-                className="bg-white border border-gray-200 rounded-lg p-4 flex items-start gap-3 hover:border-[#C8793F] hover:shadow-sm transition-all duration-200 group"
+                className="bg-white border border-gray-200 rounded-lg p-4 flex items-start gap-3 hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
               >
                 <div
                   className="shrink-0 w-9 h-9 rounded flex items-center justify-center mt-0.5"

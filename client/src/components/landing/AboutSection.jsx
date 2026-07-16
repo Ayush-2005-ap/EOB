@@ -44,7 +44,7 @@ export default function AboutSection() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Eyebrow */}
         <div className="flex items-center gap-3 mb-4">
-          <span className="w-6 h-0.5 bg-[#0071BC]" />
+          
           <span className="text-[#0071BC] text-xs font-bold uppercase tracking-[0.18em]">
             The Initiative
           </span>
@@ -68,7 +68,7 @@ export default function AboutSection() {
           {cards.map(({ title, desc, color, icon }) => (
             <div
               key={title}
-              className="bg-white border border-gray-200 rounded-lg p-7 hover:border-[#C8793F] hover:shadow-md transition-all duration-200 group"
+              className="bg-white border border-gray-200 rounded-lg p-7 hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
             >
               {/* Icon — WB flat style: tinted bg, solid fill icon */}
               <div

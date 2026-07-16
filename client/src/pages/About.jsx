@@ -57,7 +57,7 @@ export default function About() {
         {/* Main Content */}
         <div className="relative z-10 text-center px-6">
           <motion.div variants={item} className="flex items-center justify-center gap-3 mb-3">
-            <span className="w-6 h-0.5 bg-[#0071BC]" />
+            
             <span className="text-[#0071BC] text-xs font-bold uppercase tracking-[0.18em]">
               Centre for Civil Society
             </span>
@@ -130,7 +130,7 @@ export default function About() {
               <motion.div
                 key={i}
                 variants={item}
-                className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm hover:border-[#C8793F] transition-all duration-200 flex flex-col"
+                className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col"
               >
                 <div
                   className="w-12 h-12 rounded flex items-center justify-center mb-6"

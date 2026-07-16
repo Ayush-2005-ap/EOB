@@ -52,7 +52,7 @@ export default function Outreach() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-[#002244]/90" />
         <div className="relative z-10 text-center px-6">
           <motion.div variants={item} className="flex items-center justify-center gap-3 mb-3">
-            <span className="w-6 h-0.5 bg-[#0071BC]" />
+            
             <span className="text-[#0071BC] text-xs font-bold uppercase tracking-[0.18em]">
               Engagement &amp; Advocacy
             </span>
@@ -72,7 +72,7 @@ export default function Outreach() {
           {/* Card 1 */}
           <motion.div 
             variants={item} 
-            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] transition"
+            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
           >
             <div className="w-12 h-12 rounded bg-[#0071BC]/10 text-[#0071BC] flex items-center justify-center mb-6">
               <IconPartnership />
@@ -89,7 +89,7 @@ export default function Outreach() {
           {/* Card 2 */}
           <motion.div 
             variants={item} 
-            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] transition"
+            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
           >
             <div className="w-12 h-12 rounded bg-[#00538A]/10 text-[#00538A] flex items-center justify-center mb-6">
               <IconSearch />
@@ -106,7 +106,7 @@ export default function Outreach() {
           {/* Card 3 */}
           <motion.div 
             variants={item} 
-            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] transition"
+            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
           >
             <div className="w-12 h-12 rounded bg-[#002244]/10 text-[#002244] flex items-center justify-center mb-6">
               <IconSpeaker />

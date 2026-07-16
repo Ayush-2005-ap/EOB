@@ -75,7 +75,7 @@ function ContactPage() {
         {/* Hero */}
         <section className="text-center mb-16 max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-3 mb-3">
-            <span className="w-6 h-0.5 bg-[#0071BC]" />
+            
             <span className="text-[#0071BC] text-xs font-bold uppercase tracking-[0.18em]">
               Support &amp; Collaboration
             </span>
