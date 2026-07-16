@@ -85,7 +85,7 @@ export default function HeroV2() {
             {stats.map(({ Icon, value, label, color }) => (
               <div
                 key={label}
-                className="bg-white border border-gray-200 rounded-lg p-4 flex items-start gap-3 hover:border-[#0071BC] hover:shadow-sm transition-all duration-200 group"
+                className="bg-white border border-gray-200 rounded-lg p-4 flex items-start gap-3 hover:border-[#C8793F] hover:shadow-sm transition-all duration-200 group"
               >
                 <div
                   className="shrink-0 w-9 h-9 rounded flex items-center justify-center mt-0.5"
@@ -114,7 +114,7 @@ export default function HeroV2() {
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => navigate("/ranking")}
-              className="bg-[#0071BC] hover:bg-[#00538A] text-white font-bold px-7 py-3 rounded transition-colors duration-200 text-sm tracking-wide"
+              className="bg-[#0071BC] hover:bg-[#C8793F] text-white font-bold px-7 py-3 rounded transition-colors duration-200 text-sm tracking-wide"
             >
               View State Rankings →
             </button>

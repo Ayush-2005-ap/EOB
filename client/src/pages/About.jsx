@@ -130,7 +130,7 @@ export default function About() {
               <motion.div
                 key={i}
                 variants={item}
-                className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm hover:border-[#0071BC] transition-all duration-200 flex flex-col"
+                className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm hover:border-[#C8793F] transition-all duration-200 flex flex-col"
               >
                 <div
                   className="w-12 h-12 rounded flex items-center justify-center mb-6"
@@ -165,7 +165,7 @@ export default function About() {
           </p>
           <button
             onClick={() => navigate("/contactUs")}
-            className="bg-[#0071BC] hover:bg-[#00538A] text-white font-bold px-8 py-3.5 rounded transition-all duration-200 shadow-sm text-sm"
+            className="bg-[#0071BC] hover:bg-[#C8793F] text-white font-bold px-8 py-3.5 rounded transition-all duration-200 shadow-sm text-sm"
           >
             Get In Touch →
           </button>

@@ -18,7 +18,7 @@ function ResourcePreviewCard({ resource }) {
   return (
     <Link
       to={`/resources/${resource._id}`}
-      className="group bg-white border border-gray-200 rounded-lg p-6 hover:border-[#0071BC] hover:shadow-md transition-all duration-200 flex flex-col"
+      className="group bg-white border border-gray-200 rounded-lg p-6 hover:border-[#C8793F] hover:shadow-md transition-all duration-200 flex flex-col"
     >
       {/* Icon */}
       <div className="w-10 h-10 rounded flex items-center justify-center mb-4 text-[#0071BC] bg-[#0071BC]/10 group-hover:bg-[#0071BC]/20 transition-colors">
@@ -31,7 +31,7 @@ function ResourcePreviewCard({ resource }) {
         </span>
       )}
 
-      <h3 className="text-sm font-bold text-[#002244] mb-2 leading-snug group-hover:text-[#0071BC] transition-colors line-clamp-2" style={{ fontFamily: "'Open Sans', sans-serif" }}>
+      <h3 className="text-sm font-bold text-[#002244] mb-2 leading-snug group-hover:text-[#C8793F] transition-colors line-clamp-2" style={{ fontFamily: "'Open Sans', sans-serif" }}>
         {resource.title}
       </h3>
 
@@ -39,7 +39,7 @@ function ResourcePreviewCard({ resource }) {
         {resource.description || resource.summary || "Research publication by CCS."}
       </p>
 
-      <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#002244] group-hover:text-[#0071BC] transition-colors">
+      <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#002244] group-hover:text-[#C8793F] transition-colors">
         Read more <IconArrow />
       </span>
     </Link>
@@ -104,7 +104,7 @@ export default function ResourcesPreviewSection() {
         <div className="mt-8 text-center">
           <Link
             to="/resources"
-            className="inline-flex items-center gap-2 text-[#0071BC] font-bold text-sm uppercase tracking-widest hover:text-[#00538A] transition-colors group"
+            className="inline-flex items-center gap-2 text-[#0071BC] font-bold text-sm uppercase tracking-widest hover:text-[#C8793F] transition-colors group"
           >
             View All Resources <IconArrow />
           </Link>

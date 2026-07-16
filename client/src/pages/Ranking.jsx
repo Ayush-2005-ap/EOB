@@ -125,7 +125,7 @@ function ComparisonPanel({ allStates }) {
                         onClick={() => add(s)}
                         className="w-full text-left px-4 py-3 hover:bg-[#0071BC]/10 transition-colors flex items-center justify-between group"
                       >
-                        <span className="text-sm font-semibold text-[#002244] group-hover:text-[#0071BC]">{s.name}</span>
+                        <span className="text-sm font-semibold text-[#002244] group-hover:text-[#C8793F]">{s.name}</span>
                         <span className="text-xs text-gray-400">Rank #{s.rankNumber}</span>
                       </button>
                     ))
@@ -360,7 +360,7 @@ export default function Rankings() {
             <div className="relative">
               <button
                 onClick={() => setCategoryOpen(!categoryOpen)}
-                className="w-full sm:w-64 bg-[#0071BC] hover:bg-[#00538A] text-white font-semibold text-sm px-5 py-3 rounded flex items-center justify-between transition cursor-pointer"
+                className="w-full sm:w-64 bg-[#0071BC] hover:bg-[#C8793F] text-white font-semibold text-sm px-5 py-3 rounded flex items-center justify-between transition cursor-pointer"
               >
                 <span>{filter === "ALL" ? "Select Rankings by Category" : filter}</span>
                 <IconChevronDown />
@@ -474,7 +474,7 @@ export default function Rankings() {
                 {hasMore && (
                   <button
                     onClick={() => setVisible((v) => v + PAGE_SIZE)}
-                    className="text-xs font-bold text-white bg-[#0071BC] hover:bg-[#00538A] px-4 py-2.5 rounded transition shadow-sm cursor-pointer"
+                    className="text-xs font-bold text-white bg-[#0071BC] hover:bg-[#C8793F] px-4 py-2.5 rounded transition shadow-sm cursor-pointer"
                   >
                     Load More
                   </button>

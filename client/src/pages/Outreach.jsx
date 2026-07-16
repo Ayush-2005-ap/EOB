@@ -72,7 +72,7 @@ export default function Outreach() {
           {/* Card 1 */}
           <motion.div 
             variants={item} 
-            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#0071BC] transition"
+            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] transition"
           >
             <div className="w-12 h-12 rounded bg-[#0071BC]/10 text-[#0071BC] flex items-center justify-center mb-6">
               <IconPartnership />
@@ -89,7 +89,7 @@ export default function Outreach() {
           {/* Card 2 */}
           <motion.div 
             variants={item} 
-            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#0071BC] transition"
+            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] transition"
           >
             <div className="w-12 h-12 rounded bg-[#00538A]/10 text-[#00538A] flex items-center justify-center mb-6">
               <IconSearch />
@@ -106,7 +106,7 @@ export default function Outreach() {
           {/* Card 3 */}
           <motion.div 
             variants={item} 
-            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#0071BC] transition"
+            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] transition"
           >
             <div className="w-12 h-12 rounded bg-[#002244]/10 text-[#002244] flex items-center justify-center mb-6">
               <IconSpeaker />
@@ -138,7 +138,7 @@ export default function Outreach() {
           </p>
           <button 
             onClick={() => navigate("/contactUs")}
-            className="bg-[#0071BC] hover:bg-[#00538A] text-white px-10 py-4 rounded font-bold transition shadow-sm text-sm"
+            className="bg-[#0071BC] hover:bg-[#C8793F] text-white px-10 py-4 rounded font-bold transition shadow-sm text-sm"
           >
             Get In Touch
           </button>

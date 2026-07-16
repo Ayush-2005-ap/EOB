@@ -68,7 +68,7 @@ export default function ResourceDetail() {
         <p className="text-gray-500 mb-6">The report you are looking for might have been moved or removed.</p>
         <button
           onClick={() => navigate("/resources")}
-          className="bg-[#0071BC] hover:bg-[#00538A] text-white font-bold px-7 py-3 rounded transition text-sm cursor-pointer"
+          className="bg-[#0071BC] hover:bg-[#C8793F] text-white font-bold px-7 py-3 rounded transition text-sm cursor-pointer"
         >
           Explore All Resources
         </button>
@@ -83,7 +83,7 @@ export default function ResourceDetail() {
         {/* Back Link */}
         <button
           onClick={() => navigate("/resources")}
-          className="inline-flex items-center gap-2 text-sm font-bold text-[#002244] hover:text-[#0071BC] transition-colors mb-8 group cursor-pointer"
+          className="inline-flex items-center gap-2 text-sm font-bold text-[#002244] hover:text-[#C8793F] transition-colors mb-8 group cursor-pointer"
         >
           <IconArrowLeft />
           Back to Library
@@ -161,7 +161,7 @@ export default function ResourceDetail() {
                 download
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 bg-[#0071BC] hover:bg-[#00538A] text-white font-bold px-8 py-3.5 rounded transition shadow text-sm cursor-pointer"
+                className="inline-flex items-center gap-2 bg-[#0071BC] hover:bg-[#C8793F] text-white font-bold px-8 py-3.5 rounded transition shadow text-sm cursor-pointer"
               >
                 <IconDownload />
                 Download PDF Report

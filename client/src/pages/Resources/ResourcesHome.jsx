@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { fetchResources } from "../../services/api";
 
-const ITEMS_PER_PAGE = 6;
-
 const CATEGORIES = [
-  { label: "All Materials", value: "all" },
   { label: "Reports", value: "reports" },
   { label: "Research", value: "research" },
   { label: "Policy Briefs", value: "policy-briefs" },
@@ -13,43 +10,26 @@ const CATEGORIES = [
   { label: "Publications", value: "publications" },
 ];
 
-// Crisp filled SVG icons
-const IconBook = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-    <path d="M12 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1h-8zm6 14H11V5h7v12zM6.5 22H20v-2H6.5A1.5 1.5 0 0 1 5 18.5V5.5A1.5 1.5 0 0 1 6.5 4H9V2H6.5A3.5 3.5 0 0 0 3 5.5v13A3.5 3.5 0 0 0 6.5 22z"/>
-  </svg>
-);
+const STATES = [
+  "Gujarat", "Andhra Pradesh", "Jharkhand", "Karnataka", "Tamil Nadu", "Maharashtra", "Uttar Pradesh", "Delhi"
+];
 
-const IconFile = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm-1 1.5 4.5 4.5H13V3.5zM8 13h8v1.5H8zm0 3h5v1.5H8zm0-6h3v1.5H8z"/>
-  </svg>
-);
-
-const IconSearch = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4">
-    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-  </svg>
-);
-
-const IconChevronLeft = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-    <polyline points="15 18 9 12 15 6"/>
-  </svg>
-);
-
-const IconChevronRight = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-    <polyline points="9 18 15 12 9 6"/>
+const IconChevronDown = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-white">
+    <polyline points="6 9 12 15 18 9"/>
   </svg>
 );
 
 export default function ResourcesHome() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Selection states
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedState, setSelectedState] = useState("all");
+
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const [stateDropdownOpen, setStateDropdownOpen] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -65,178 +45,322 @@ export default function ResourcesHome() {
     load();
   }, []);
 
-  // Filter category + search query
+  // Filter resources based on selections
   const filteredResources = resources.filter((r) => {
-    const matchesCategory = activeCategory === "all" || r.category === activeCategory;
-    const matchesSearch =
-      r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (r.excerpt && r.excerpt.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesSearch;
+    const matchesCategory = selectedCategory === "all" || r.category === selectedCategory;
+    const matchesState = selectedState === "all" || 
+      r.title.toLowerCase().includes(selectedState.toLowerCase()) ||
+      (r.description && r.description.toLowerCase().includes(selectedState.toLowerCase())) ||
+      (r.excerpt && r.excerpt.toLowerCase().includes(selectedState.toLowerCase()));
+    return matchesCategory && matchesState;
   });
 
-  // Pagination
-  const totalPages = Math.ceil(filteredResources.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentResources = filteredResources.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const isFilterActive = selectedCategory !== "all" || selectedState !== "all";
 
-  const handleCategoryChange = (cat) => {
-    setActiveCategory(cat);
-    setCurrentPage(1);
+  // Export all resources to CSV (Excel format)
+  const handleExcelExport = (e) => {
+    e.preventDefault();
+    if (resources.length === 0) return;
+
+    const headers = ["Title", "Category", "Date", "Source/Publisher", "Description/Excerpt", "Download Link"];
+    const rows = resources.map((r) => [
+      r.title,
+      r.category,
+      r.date || "N/A",
+      r.source || "Centre for Civil Society",
+      r.excerpt || r.description || "",
+      r.pdf || ""
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(","), ...rows.map(row => row.map(val => `"${val.replace(/"/g, '""')}"`).join(","))].join("\n");
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "CCS_EODB_Research_Publications.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Reusable selector drop downs rendering
+  const renderSelectors = (isSidebar = false) => {
+    const wrapperClass = isSidebar 
+      ? "space-y-4 pt-1" 
+      : "grid sm:grid-cols-2 gap-4 pt-4 pb-8 border-b border-gray-100";
+    
+    return (
+      <div className={wrapperClass}>
+        {/* Dropdown 1: Category */}
+        <div>
+          <p className="text-xs font-bold text-gray-600 mb-2">Papers on Doing Business categories:</p>
+          <div className="relative">
+            <button
+              onClick={() => { setCategoryDropdownOpen(!categoryDropdownOpen); setStateDropdownOpen(false); }}
+              className="w-full bg-[#0071BC] hover:bg-[#C8793F] text-white font-semibold text-sm px-4 py-3 rounded flex items-center justify-between transition cursor-pointer"
+            >
+              <span>{selectedCategory === "all" ? "Select a category" : selectedCategory.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}</span>
+              <IconChevronDown />
+            </button>
+            {categoryDropdownOpen && (
+              <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg z-20 overflow-hidden">
+                <button
+                  onClick={() => { setSelectedCategory("all"); setCategoryDropdownOpen(false); }}
+                  className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  All Categories
+                </button>
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.value}
+                    onClick={() => {
+                      setSelectedCategory(cat.value);
+                      setSelectedState("all"); // clear state filter to prevent empty results
+                      setCategoryDropdownOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Dropdown 2: State focus */}
+        <div>
+          <p className="text-xs font-bold text-gray-600 mb-2">Doing Business state focus:</p>
+          <div className="relative">
+            <button
+              onClick={() => { setStateDropdownOpen(!stateDropdownOpen); setCategoryDropdownOpen(false); }}
+              className="w-full bg-[#0071BC] hover:bg-[#C8793F] text-white font-semibold text-sm px-4 py-3 rounded flex items-center justify-between transition cursor-pointer"
+            >
+              <span>{selectedState === "all" ? "Select a state" : selectedState}</span>
+              <IconChevronDown />
+            </button>
+            {stateDropdownOpen && (
+              <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg z-20 overflow-hidden">
+                <button
+                  onClick={() => { setSelectedState("all"); setStateDropdownOpen(false); }}
+                  className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  All States
+                </button>
+                {STATES.map((st) => (
+                  <button
+                    key={st}
+                    onClick={() => {
+                      setSelectedState(st);
+                      setSelectedCategory("all"); // clear category filter
+                      setStateDropdownOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    {st}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[450px] bg-[#F5F7FA]">
+      <div className="flex justify-center items-center min-h-[450px] bg-white">
         <div className="w-10 h-10 rounded-full border-4 border-blue-100 border-t-[#0071BC] animate-spin" />
       </div>
     );
   }
 
+  const activeTitle = selectedCategory !== "all" 
+    ? `Research on ${selectedCategory.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}`
+    : selectedState !== "all"
+      ? `Research related to ${selectedState}`
+      : "Doing Business and Related Research";
+
   return (
-    <div className="bg-[#F5F7FA] min-h-screen py-16 md:py-20">
+    <div className="bg-white min-h-screen py-16">
       <div className="container mx-auto px-6 max-w-6xl">
         
-        {/* Header */}
-        <div className="mb-12 text-center max-w-3xl mx-auto">
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <span className="w-6 h-0.5 bg-[#0071BC]" />
-            <span className="text-[#0071BC] text-xs font-bold uppercase tracking-[0.18em]">
-              Knowledge Hub
-            </span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-[#002244] tracking-tight mb-4" style={{ fontFamily: "'Open Sans', sans-serif" }}>
-            Resource Library
-          </h1>
-          <p className="text-gray-500 text-base md:text-lg leading-relaxed">
-            Access our latest research publications, regulatory frameworks, policy briefs, and state compliance reports.
-          </p>
-        </div>
+        {/* Main Grid Layout */}
+        <div className="grid md:grid-cols-12 gap-12">
+          
+          {/* Left Column: Title, Intro & Selected Research List */}
+          <div className="md:col-span-8 space-y-6">
+            
+            {/* Dynamic Title */}
+            <h1 className="text-3xl font-bold text-[#002244] leading-tight" style={{ fontFamily: "'Open Sans', sans-serif" }}>
+              {activeTitle}
+            </h1>
 
-        {/* Toolbar: Search + Category Filter */}
-        <div className="space-y-6 mb-12">
-          {/* Search */}
-          <div className="max-w-md mx-auto relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><IconSearch /></span>
-            <input
-              type="text"
-              placeholder="Search reports, research, articles..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="w-full bg-white border border-gray-200 pl-11 pr-4 py-3 rounded focus:ring-2 focus:ring-[#0071BC] focus:border-transparent outline-none text-sm transition shadow-sm text-gray-700"
-            />
-          </div>
-
-          {/* Filters */}
-          <div className="flex justify-center flex-wrap gap-2">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.value}
-                onClick={() => handleCategoryChange(cat.value)}
-                className={`px-5 py-2 rounded text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
-                  activeCategory === cat.value
-                    ? "bg-[#002244] text-white shadow-md"
-                    : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-100"
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Resources Grid/List */}
-        <div className="max-w-4xl mx-auto space-y-5">
-          {currentResources.length === 0 ? (
-            <div className="text-center py-20 bg-white border border-gray-200 rounded text-gray-400 italic text-sm">
-              No publications found matching your search.
-            </div>
-          ) : (
-            currentResources.map((item) => (
-              <div
-                key={item._id}
-                className="bg-white border border-gray-200 rounded p-6 md:p-8 shadow-sm hover:border-[#0071BC] transition-all duration-200 flex flex-col md:flex-row gap-6 items-start group"
-              >
-                {/* Visual Thumbnail */}
-                <div className="w-12 h-12 bg-[#0071BC]/10 rounded flex items-center justify-center shrink-0 text-[#0071BC] transition-colors">
-                  {item.category === "publications" || item.category === "reports" ? (
-                    <IconBook />
-                  ) : (
-                    <IconFile />
-                  )}
-                </div>
-
-                {/* Text Content */}
-                <div className="flex-1 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#0071BC]">
-                      {item.category}
-                    </span>
-                    {item.date && (
-                      <span className="text-xs text-gray-300 font-medium font-mono">
-                        {item.date}
-                      </span>
-                    )}
-                  </div>
-
-                  <h2 className="text-lg font-bold text-[#002244] group-hover:text-[#0071BC] transition-colors leading-snug" style={{ fontFamily: "'Open Sans', sans-serif" }}>
-                    {item.title}
-                  </h2>
-
-                  <p className="text-gray-500 text-sm leading-relaxed line-clamp-3">
-                    {item.excerpt || item.description || "Research analysis publication from the Centre for Civil Society."}
-                  </p>
-
-                  <div className="pt-2">
-                    <Link
-                      to={`/resources/${item._id}`}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#002244] hover:text-[#0071BC] transition-colors"
-                    >
-                      Read full publication <span>→</span>
-                    </Link>
-                  </div>
-                </div>
+            {/* Breadcrumb if active filter */}
+            {isFilterActive && (
+              <div className="text-sm text-gray-500">
+                <button 
+                  onClick={() => { setSelectedCategory("all"); setSelectedState("all"); }}
+                  className="text-[#0071BC] hover:text-[#C8793F] hover:underline"
+                >
+                  Doing Business and related research
+                </button>
+                <span className="mx-2">&gt;</span>
+                <span className="text-gray-700">{selectedCategory !== "all" ? selectedCategory : selectedState}</span>
               </div>
-            ))
-          )}
-        </div>
+            )}
 
-        {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-1.5 mt-12 flex-wrap">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-              disabled={currentPage === 1}
-              className="p-2 border border-gray-200 rounded bg-white hover:bg-gray-100 disabled:opacity-20 hover:cursor-pointer transition shrink-0"
-            >
-              <IconChevronLeft />
-            </button>
+            {/* Intro text (shows only on root overview page) */}
+            {!isFilterActive && (
+              <div className="text-gray-700 space-y-4 text-[15px] leading-relaxed">
+                <p>
+                  Each year <em>Ease of Doing Business</em> highlights important new work that speaks to a variety of issues impacting the private sector. Brief summaries of this work — including policy briefs, regulatory impact assessments, and academic papers — are available by <em>Ease of Doing Business</em> topic and related policy spaces. If you would like to recommend any additional papers that are not already listed on the website please email your suggestions to the team.
+                </p>
+                <p>
+                  Blogs and publications from our research team are also provided periodically to reflect ground-level MSME reform progress across Indian states.
+                </p>
+                <p>
+                  Make a selection below to see the papers published by category or filtered by regional state focus.
+                </p>
+              </div>
+            )}
 
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`w-9 h-9 rounded border text-xs font-bold transition-all duration-200 cursor-pointer ${
-                  currentPage === i + 1
-                    ? "bg-[#002244] text-white border-[#002244] shadow-sm"
-                    : "bg-white text-gray-500 border-gray-200 hover:bg-gray-100"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
+            {/* Render select dropdowns in main content if no filter is active */}
+            {!isFilterActive && renderSelectors(false)}
 
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="p-2 border border-gray-200 rounded bg-white hover:bg-gray-100 disabled:opacity-20 hover:cursor-pointer transition shrink-0"
-            >
-              <IconChevronRight />
-            </button>
+            {/* Italic category note on topic view */}
+            {isFilterActive && (
+              <p className="text-sm text-gray-600 italic">
+                Ease of Doing Business considers the following list of publications as relevant for research on regulations affecting private sector growth. If you find any missing publications, please let us know.
+              </p>
+            )}
+
+            {/* List of Research Papers (WB Flat Style) */}
+            <div className="space-y-10 pt-4">
+              {!isFilterActive ? (
+                <div className="bg-gray-50 border border-gray-200 rounded p-8 text-center">
+                  <p className="text-[#002244] font-bold mb-1.5" style={{ fontFamily: "'Open Sans', sans-serif" }}>Select a Topic or Regional Profile</p>
+                  <p className="text-xs text-gray-505">Choose a research category or state focus to explore reports, briefings, and publications.</p>
+                </div>
+              ) : filteredResources.length === 0 ? (
+                <p className="text-gray-400 italic text-sm">No research papers found matching this selection.</p>
+              ) : (
+                filteredResources.map((item) => (
+                  <div key={item._id} className="pb-8 border-b border-gray-100 space-y-2">
+                    {/* Title as Link */}
+                    <RouterLink
+                      to={`/resources/${item._id}`}
+                      className="text-[#0071BC] hover:text-[#C8793F] hover:underline font-bold text-lg block leading-snug"
+                      style={{ fontFamily: "'Open Sans', sans-serif" }}
+                    >
+                      {item.title}
+                    </RouterLink>
+                    
+                    {/* Meta Row: Authors / Source */}
+                    <div className="text-xs text-gray-600 space-y-1">
+                      <p>
+                        <strong className="text-gray-800">Author(s):</strong> {item.author || "Centre for Civil Society Research Team"}
+                      </p>
+                      <p>
+                        <strong className="text-gray-800">Source:</strong> {item.source || "EODB India Policy Working Paper Series"} {item.date ? `(${item.date})` : ""}
+                      </p>
+                    </div>
+
+                    {/* Abstract / Summary */}
+                    <p className="text-sm text-gray-600 leading-relaxed pt-2">
+                      <strong className="text-gray-700">Abstract:</strong> {item.description || item.excerpt || "This publication investigates state reform action plans and DIPP compliance index outcomes."}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
+
           </div>
-        )}
+
+          {/* Right Column: Sidebar (Sticky self-start) */}
+          <div className="md:col-span-4 space-y-8 md:border-l md:border-gray-200 md:pl-8 sticky top-24 self-start">
+            
+            {/* Active selectors rendered at the top of the sidebar when active */}
+            {isFilterActive && (
+              <div className="space-y-2 pb-6 border-b border-gray-200">
+                <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider" style={{ fontFamily: "'Open Sans', sans-serif" }}>
+                  Modify Search Focus
+                </h2>
+                {renderSelectors(true)}
+              </div>
+            )}
+
+            {/* DOWNLOAD SECTION */}
+            <div className="space-y-3">
+              <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider" style={{ fontFamily: "'Open Sans', sans-serif" }}>
+                Download
+              </h2>
+              <a
+                href="#export"
+                onClick={handleExcelExport}
+                className="text-sm text-[#0071BC] hover:text-[#C8793F] hover:underline block leading-snug"
+              >
+                Download full list of research papers related to Doing Business topics (Excel)
+              </a>
+            </div>
+
+            {/* SIDEBAR NAVIGATION: PAPERS BY TOPICS */}
+            <div className="space-y-4">
+              <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider" style={{ fontFamily: "'Open Sans', sans-serif" }}>
+                Papers on EODB Topics
+              </h2>
+              <ul className="space-y-2.5">
+                <li>
+                  <button
+                    onClick={() => { setSelectedCategory("all"); setSelectedState("all"); }}
+                    className={`text-sm text-left hover:text-[#C8793F] hover:underline cursor-pointer block ${
+                      selectedCategory === "all" && selectedState === "all" ? "text-gray-900 font-bold" : "text-[#0071BC]"
+                    }`}
+                  >
+                    All research topics
+                  </button>
+                </li>
+                {CATEGORIES.map((cat) => (
+                  <li key={cat.value}>
+                    <button
+                      onClick={() => { setSelectedCategory(cat.value); setSelectedState("all"); }}
+                      className={`text-sm text-left hover:text-[#C8793F] hover:underline cursor-pointer block ${
+                        selectedCategory === cat.value ? "text-gray-900 font-bold" : "text-[#0071BC]"
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* SIDEBAR NAVIGATION: PAPERS BY STATE */}
+            <div className="space-y-4">
+              <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider" style={{ fontFamily: "'Open Sans', sans-serif" }}>
+                Regional Profiles
+              </h2>
+              <ul className="space-y-2.5">
+                {STATES.map((st) => (
+                  <li key={st}>
+                    <button
+                      onClick={() => { setSelectedState(st); setSelectedCategory("all"); }}
+                      className={`text-sm text-left hover:text-[#C8793F] hover:underline cursor-pointer block ${
+                        selectedState === st ? "text-gray-900 font-bold" : "text-[#0071BC]"
+                      }`}
+                    >
+                      {st}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+          </div>
+
+        </div>
 
       </div>
     </div>

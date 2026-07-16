@@ -102,7 +102,7 @@ export default function StateDetails() {
         <p className="text-gray-500 mb-6">The requested regional ranking details could not be found.</p>
         <button
           onClick={() => navigate("/ranking")}
-          className="bg-[#0071BC] hover:bg-[#00538A] text-white font-bold px-6 py-3 rounded transition text-sm cursor-pointer"
+          className="bg-[#0071BC] hover:bg-[#C8793F] text-white font-bold px-6 py-3 rounded transition text-sm cursor-pointer"
         >
           ← Back to Rankings
         </button>
@@ -124,7 +124,7 @@ export default function StateDetails() {
         {/* Back navigation */}
         <button
           onClick={() => navigate("/ranking")}
-          className="inline-flex items-center gap-2 text-sm font-bold text-[#002244] hover:text-[#0071BC] transition-colors mb-8 group cursor-pointer"
+          className="inline-flex items-center gap-2 text-sm font-bold text-[#002244] hover:text-[#C8793F] transition-colors mb-8 group cursor-pointer"
         >
           <IconArrowLeft />
           Back to Rankings Index
@@ -156,7 +156,7 @@ export default function StateDetails() {
           <div className="grid md:grid-cols-3 gap-6 pt-8">
             
             {/* Metric 1: National Rank */}
-            <div className="bg-[#F5F7FA] rounded p-6 border border-gray-200 flex items-start gap-4 transition hover:border-[#0071BC]">
+            <div className="bg-[#F5F7FA] rounded p-6 border border-gray-200 flex items-start gap-4 transition hover:border-[#C8793F]">
               <div className="w-10 h-10 bg-[#0071BC]/10 rounded flex items-center justify-center shrink-0 text-[#0071BC]">
                 <IconAward />
               </div>
@@ -171,7 +171,7 @@ export default function StateDetails() {
             </div>
 
             {/* Metric 2: Compliance Score */}
-            <div className="bg-[#F5F7FA] rounded p-6 border border-gray-200 flex items-start gap-4 transition hover:border-[#0071BC]">
+            <div className="bg-[#F5F7FA] rounded p-6 border border-gray-200 flex items-start gap-4 transition hover:border-[#C8793F]">
               <div className="w-10 h-10 bg-[#0071BC]/10 rounded flex items-center justify-center shrink-0 text-[#0071BC]">
                 <IconPercent />
               </div>
@@ -197,7 +197,7 @@ export default function StateDetails() {
             </div>
 
             {/* Metric 3: Groupings */}
-            <div className="bg-[#F5F7FA] rounded p-6 border border-gray-200 flex items-start gap-4 transition hover:border-[#0071BC]">
+            <div className="bg-[#F5F7FA] rounded p-6 border border-gray-200 flex items-start gap-4 transition hover:border-[#C8793F]">
               <div className="w-10 h-10 bg-[#00538A]/10 rounded flex items-center justify-center shrink-0 text-[#00538A]">
                 <IconInfo />
               </div>

@@ -220,7 +220,7 @@ function ContactPage() {
 
               <button
                 type="submit"
-                className="w-full md:w-auto bg-[#0071BC] hover:bg-[#00538A] text-white py-3.5 px-10 rounded font-bold hover:cursor-pointer transition-all shadow-sm text-sm"
+                className="w-full md:w-auto bg-[#0071BC] hover:bg-[#C8793F] text-white py-3.5 px-10 rounded font-bold hover:cursor-pointer transition-all shadow-sm text-sm"
               >
                 Send Message
               </button>

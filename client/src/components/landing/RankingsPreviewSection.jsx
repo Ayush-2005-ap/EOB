@@ -27,7 +27,7 @@ function RankingCard({ state, variant }) {
   return (
     <div
       onClick={() => navigate(`/rankings/${state.slug}`)}
-      className="bg-white border border-gray-200 rounded p-6 hover:border-[#0071BC] hover:shadow-md transition-all duration-200 cursor-pointer group"
+      className="bg-white border border-gray-200 rounded p-6 hover:border-[#C8793F] hover:shadow-md transition-all duration-200 cursor-pointer group"
     >
       {/* Rank badge */}
       <div className="flex items-start justify-between mb-4">
@@ -40,7 +40,7 @@ function RankingCard({ state, variant }) {
       </div>
 
       {/* State name */}
-      <h3 className="text-lg font-bold text-[#002244] mb-1 group-hover:text-[#0071BC] transition-colors leading-tight" style={{ fontFamily: "'Open Sans', sans-serif" }}>
+      <h3 className="text-lg font-bold text-[#002244] mb-1 group-hover:text-[#C8793F] transition-colors leading-tight" style={{ fontFamily: "'Open Sans', sans-serif" }}>
         {state.name}
       </h3>
 
@@ -175,7 +175,7 @@ export default function RankingsPreviewSection() {
         <div className="mt-10 text-center">
           <button
             onClick={() => navigate("/ranking")}
-            className="bg-[#0071BC] hover:bg-[#00538A] text-white font-bold px-8 py-3.5 rounded transition-colors duration-200 shadow-sm text-sm"
+            className="bg-[#0071BC] hover:bg-[#C8793F] text-white font-bold px-8 py-3.5 rounded transition-colors duration-200 shadow-sm text-sm"
           >
             View Full Rankings Table →
           </button>
