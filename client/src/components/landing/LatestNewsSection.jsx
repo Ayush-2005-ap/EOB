@@ -61,7 +61,7 @@ export default function LatestNewsSection() {
             {news.map((item) => (
               <div
                 key={item._id}
-                className="group bg-white border border-gray-200 rounded p-7 hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
+                className="group bg-white border border-gray-200 rounded p-7 hover:border-[#C8793F] hover:shadow-lg hover:shadow-[#C8793F]/20 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
               >
                 {/* Meta row */}
                 <div className="flex justify-between items-center mb-4">

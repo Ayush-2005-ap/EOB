@@ -72,7 +72,7 @@ export default function Outreach() {
           {/* Card 1 */}
           <motion.div 
             variants={item} 
-            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:shadow-[#C8793F]/20 hover:-translate-y-1 transition-all duration-300"
           >
             <div className="w-12 h-12 rounded bg-[#0071BC]/10 text-[#0071BC] flex items-center justify-center mb-6">
               <IconPartnership />
@@ -89,7 +89,7 @@ export default function Outreach() {
           {/* Card 2 */}
           <motion.div 
             variants={item} 
-            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:shadow-[#C8793F]/20 hover:-translate-y-1 transition-all duration-300"
           >
             <div className="w-12 h-12 rounded bg-[#00538A]/10 text-[#00538A] flex items-center justify-center mb-6">
               <IconSearch />
@@ -106,7 +106,7 @@ export default function Outreach() {
           {/* Card 3 */}
           <motion.div 
             variants={item} 
-            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            className="bg-white p-8 rounded border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:shadow-[#C8793F]/20 hover:-translate-y-1 transition-all duration-300"
           >
             <div className="w-12 h-12 rounded bg-[#002244]/10 text-[#002244] flex items-center justify-center mb-6">
               <IconSpeaker />

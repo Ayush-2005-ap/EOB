@@ -18,7 +18,7 @@ function ResourcePreviewCard({ resource }) {
   return (
     <Link
       to={`/resources/${resource._id}`}
-      className="group bg-white border border-gray-200 rounded-lg p-6 hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col"
+      className="group bg-white border border-gray-200 rounded-lg p-6 hover:border-[#C8793F] hover:shadow-lg hover:shadow-[#C8793F]/20 hover:-translate-y-1 transition-all duration-300 flex flex-col"
     >
       {/* Icon */}
       <div className="w-10 h-10 rounded flex items-center justify-center mb-4 bg-gray-50 border border-gray-100">

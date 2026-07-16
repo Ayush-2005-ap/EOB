@@ -68,7 +68,7 @@ export default function AboutSection() {
           {cards.map(({ title, desc, color, icon }) => (
             <div
               key={title}
-              className="bg-white border border-gray-200 rounded-lg p-7 hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
+              className="bg-white border border-gray-200 rounded-lg p-7 hover:border-[#C8793F] hover:shadow-lg hover:shadow-[#C8793F]/20 hover:-translate-y-1 transition-all duration-300 group"
             >
               {/* Icon — WB flat style: tinted bg, solid fill icon */}
               <div

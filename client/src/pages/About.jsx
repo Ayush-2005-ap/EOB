@@ -130,7 +130,7 @@ export default function About() {
               <motion.div
                 key={i}
                 variants={item}
-                className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:shadow-[#C8793F]/20 hover:-translate-y-1 transition-all duration-300 flex flex-col"
               >
                 <div
                   className="w-12 h-12 rounded flex items-center justify-center mb-6"

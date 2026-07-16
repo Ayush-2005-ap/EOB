@@ -27,7 +27,7 @@ function RankingCard({ state, variant }) {
   return (
     <div
       onClick={() => navigate(`/rankings/${state.slug}`)}
-      className="bg-white border border-gray-200 rounded p-6 hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
+      className="bg-white border border-gray-200 rounded p-6 hover:border-[#C8793F] hover:shadow-lg hover:shadow-[#C8793F]/20 hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
     >
       {/* Rank badge */}
       <div className="flex items-start justify-between mb-4">

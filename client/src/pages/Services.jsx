@@ -79,7 +79,7 @@ export default function Services() {
               <motion.div 
                 key={i} 
                 variants={card} 
-                className="p-8 bg-white rounded border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
+                className="p-8 bg-white rounded border border-gray-200 shadow-sm hover:border-[#C8793F] hover:shadow-lg hover:shadow-[#C8793F]/20 hover:-translate-y-1 transition-all duration-300 group"
               >
                 <div
                   className="w-12 h-12 rounded flex items-center justify-center mb-6 text-white"
