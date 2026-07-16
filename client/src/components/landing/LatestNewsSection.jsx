@@ -42,7 +42,7 @@ export default function LatestNewsSection() {
           <h2 className="text-3xl md:text-4xl font-black text-[#0F1E3C] leading-tight">
             Policy Intelligence
           </h2>
-          <div className="w-12 h-[3px] bg-[#E88C30] mt-3 rounded-full" />
+
         </div>
 
         {news.length === 0 ? (
@@ -56,8 +56,7 @@ export default function LatestNewsSection() {
                 key={item._id}
                 className="group bg-white border border-gray-100 rounded-2xl p-7 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 relative overflow-hidden"
               >
-                {/* Left accent bar */}
-                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#E88C30] opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-l-2xl" />
+
 
                 {/* Meta row */}
                 <div className="flex justify-between items-center mb-4">

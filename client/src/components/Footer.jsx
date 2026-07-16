@@ -35,7 +35,7 @@ export default function Footer() {
 
         {/* Column 2: Quick Links */}
         <div>
-          <h4 className="text-[10px] font-black uppercase tracking-widest text-[#E88C30] mb-5">
+          <h4 className="text-[10px] font-black uppercase tracking-widest text-[#0071BC] mb-5">
             Quick Links
           </h4>
           <ul className="space-y-2.5">
@@ -43,7 +43,7 @@ export default function Footer() {
               <li key={to}>
                 <Link
                   to={to}
-                  className="text-white/55 hover:text-[#E88C30] text-sm transition-colors duration-150"
+                  className="text-white/55 hover:text-[#0071BC] text-sm transition-colors duration-150"
                 >
                   {label}
                 </Link>
@@ -54,22 +54,22 @@ export default function Footer() {
 
         {/* Column 3: Contact */}
         <div>
-          <h4 className="text-[10px] font-black uppercase tracking-widest text-[#E88C30] mb-5">
+          <h4 className="text-[10px] font-black uppercase tracking-widest text-[#0071BC] mb-5">
             Contact
           </h4>
           <ul className="space-y-4">
             <li className="flex items-start gap-3">
-              <Mail size={14} className="text-[#E88C30] mt-0.5 shrink-0" />
+              <Mail size={14} className="text-[#0071BC] mt-0.5 shrink-0" />
               <span className="text-white/55 text-sm">
                 info@easeofdoingbusiness.org
               </span>
             </li>
             <li className="flex items-start gap-3">
-              <Phone size={14} className="text-[#E88C30] mt-0.5 shrink-0" />
+              <Phone size={14} className="text-[#0071BC] mt-0.5 shrink-0" />
               <span className="text-white/55 text-sm">+91-11-2653-7456</span>
             </li>
             <li className="flex items-start gap-3">
-              <MapPin size={14} className="text-[#E88C30] mt-0.5 shrink-0" />
+              <MapPin size={14} className="text-[#0071BC] mt-0.5 shrink-0" />
               <span className="text-white/55 text-sm leading-snug">
                 A-69 Hauz Khas,
                 <br />
@@ -81,10 +81,10 @@ export default function Footer() {
 
         {/* Column 4: About CCS + Legal */}
         <div>
-          <h4 className="text-[10px] font-black uppercase tracking-widest text-[#E88C30] mb-5">
+          <h4 className="text-[10px] font-black uppercase tracking-widest text-[#0071BC] mb-5">
             About CCS
           </h4>
-          <p className="text-white/50 text-sm leading-relaxed mb-6">
+          <p className="text-white/55 text-sm leading-relaxed mb-6">
             Centre for Civil Society is an independent, non-profit, public
             policy think tank based in New Delhi, advancing the case for a
             free and open society.
@@ -93,7 +93,7 @@ export default function Footer() {
             href="https://ccs.in"
             target="_blank"
             rel="noreferrer"
-            className="text-xs font-bold text-[#E88C30] hover:text-white transition-colors uppercase tracking-widest"
+            className="text-xs font-bold text-[#0071BC] hover:text-white transition-colors uppercase tracking-widest"
           >
             Visit ccs.in →
           </a>

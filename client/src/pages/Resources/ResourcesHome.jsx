@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { fetchResources } from "../../services/api";
-import { FileText, BookOpen, Search, ChevronLeft, ChevronRight } from "lucide-react";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -13,6 +12,37 @@ const CATEGORIES = [
   { label: "Articles", value: "articles" },
   { label: "Publications", value: "publications" },
 ];
+
+// Crisp filled SVG icons
+const IconBook = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+    <path d="M12 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1h-8zm6 14H11V5h7v12zM6.5 22H20v-2H6.5A1.5 1.5 0 0 1 5 18.5V5.5A1.5 1.5 0 0 1 6.5 4H9V2H6.5A3.5 3.5 0 0 0 3 5.5v13A3.5 3.5 0 0 0 6.5 22z"/>
+  </svg>
+);
+
+const IconFile = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm-1 1.5 4.5 4.5H13V3.5zM8 13h8v1.5H8zm0 3h5v1.5H8zm0-6h3v1.5H8z"/>
+  </svg>
+);
+
+const IconSearch = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-4 h-4">
+    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </svg>
+);
+
+const IconChevronLeft = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+    <polyline points="15 18 9 12 15 6"/>
+  </svg>
+);
+
+const IconChevronRight = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+    <polyline points="9 18 15 12 9 6"/>
+  </svg>
+);
 
 export default function ResourcesHome() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,25 +86,27 @@ export default function ResourcesHome() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[450px] bg-[#FAFAFA]">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#E88C30]"></div>
+      <div className="flex justify-center items-center min-h-[450px] bg-[#F5F7FA]">
+        <div className="w-10 h-10 rounded-full border-4 border-blue-100 border-t-[#0071BC] animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="bg-[#FAFAFA] min-h-screen py-16 md:py-20">
+    <div className="bg-[#F5F7FA] min-h-screen py-16 md:py-20">
       <div className="container mx-auto px-6 max-w-6xl">
         
         {/* Header */}
         <div className="mb-12 text-center max-w-3xl mx-auto">
-          <span className="inline-block text-[#E88C30] text-xs font-black uppercase tracking-widest mb-3">
-            Knowledge Hub
-          </span>
-          <h1 className="text-4xl md:text-5xl font-black text-[#0F1E3C] tracking-tight mb-4 animate-fade-in">
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <span className="w-6 h-0.5 bg-[#0071BC]" />
+            <span className="text-[#0071BC] text-xs font-bold uppercase tracking-[0.18em]">
+              Knowledge Hub
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-[#002244] tracking-tight mb-4" style={{ fontFamily: "'Open Sans', sans-serif" }}>
             Resource Library
           </h1>
-          <div className="w-16 h-1 bg-[#E88C30] mx-auto mb-6 rounded-full" />
           <p className="text-gray-500 text-base md:text-lg leading-relaxed">
             Access our latest research publications, regulatory frameworks, policy briefs, and state compliance reports.
           </p>
@@ -84,7 +116,7 @@ export default function ResourcesHome() {
         <div className="space-y-6 mb-12">
           {/* Search */}
           <div className="max-w-md mx-auto relative">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><IconSearch /></span>
             <input
               type="text"
               placeholder="Search reports, research, articles..."
@@ -93,7 +125,7 @@ export default function ResourcesHome() {
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full bg-white border border-gray-200 pl-11 pr-4 py-3 rounded-2xl focus:ring-2 focus:ring-[#0F1E3C] focus:border-transparent outline-none text-sm transition shadow-xs text-gray-700"
+              className="w-full bg-white border border-gray-200 pl-11 pr-4 py-3 rounded focus:ring-2 focus:ring-[#0071BC] focus:border-transparent outline-none text-sm transition shadow-sm text-gray-700"
             />
           </div>
 
@@ -103,9 +135,9 @@ export default function ResourcesHome() {
               <button
                 key={cat.value}
                 onClick={() => handleCategoryChange(cat.value)}
-                className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                className={`px-5 py-2 rounded text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                   activeCategory === cat.value
-                    ? "bg-[#0F1E3C] text-white shadow-md shadow-[#0F1E3C]/10 scale-102"
+                    ? "bg-[#002244] text-white shadow-md"
                     : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-100"
                 }`}
               >
@@ -116,30 +148,30 @@ export default function ResourcesHome() {
         </div>
 
         {/* Resources Grid/List */}
-        <div className="max-w-5xl mx-auto space-y-6">
+        <div className="max-w-4xl mx-auto space-y-5">
           {currentResources.length === 0 ? (
-            <div className="text-center py-20 bg-white border border-gray-100 rounded-3xl text-gray-400 italic text-sm">
+            <div className="text-center py-20 bg-white border border-gray-200 rounded text-gray-400 italic text-sm">
               No publications found matching your search.
             </div>
           ) : (
             currentResources.map((item) => (
               <div
                 key={item._id}
-                className="bg-white border border-gray-100 rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-lg transition-all duration-200 group flex flex-col md:flex-row gap-6 items-start"
+                className="bg-white border border-gray-200 rounded p-6 md:p-8 shadow-sm hover:border-[#0071BC] transition-all duration-200 flex flex-col md:flex-row gap-6 items-start group"
               >
                 {/* Visual Thumbnail */}
-                <div className="w-14 h-14 bg-[#E88C30]/8 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-[#E88C30]/15 transition-colors">
+                <div className="w-12 h-12 bg-[#0071BC]/10 rounded flex items-center justify-center shrink-0 text-[#0071BC] transition-colors">
                   {item.category === "publications" || item.category === "reports" ? (
-                    <BookOpen size={24} className="text-[#E88C30]" strokeWidth={2} />
+                    <IconBook />
                   ) : (
-                    <FileText size={24} className="text-[#E88C30]" strokeWidth={2} />
+                    <IconFile />
                   )}
                 </div>
 
                 {/* Text Content */}
                 <div className="flex-1 space-y-3">
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[#E88C30] bg-[#E88C30]/8 px-2.5 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#0071BC]">
                       {item.category}
                     </span>
                     {item.date && (
@@ -149,7 +181,7 @@ export default function ResourcesHome() {
                     )}
                   </div>
 
-                  <h2 className="text-xl font-bold text-[#0F1E3C] group-hover:text-[#E88C30] transition-colors leading-snug">
+                  <h2 className="text-lg font-bold text-[#002244] group-hover:text-[#0071BC] transition-colors leading-snug" style={{ fontFamily: "'Open Sans', sans-serif" }}>
                     {item.title}
                   </h2>
 
@@ -160,7 +192,7 @@ export default function ResourcesHome() {
                   <div className="pt-2">
                     <Link
                       to={`/resources/${item._id}`}
-                      className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-[#0F1E3C] hover:text-[#E88C30] transition-colors group/link"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#002244] hover:text-[#0071BC] transition-colors"
                     >
                       Read full publication <span>→</span>
                     </Link>
@@ -177,18 +209,18 @@ export default function ResourcesHome() {
             <button
               onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
               disabled={currentPage === 1}
-              className="p-2 border border-gray-200 rounded-xl hover:bg-gray-100 disabled:opacity-20 hover:cursor-pointer transition shrink-0"
+              className="p-2 border border-gray-200 rounded bg-white hover:bg-gray-100 disabled:opacity-20 hover:cursor-pointer transition shrink-0"
             >
-              <ChevronLeft size={16} className="text-gray-600" />
+              <IconChevronLeft />
             </button>
 
             {Array.from({ length: totalPages }).map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`w-9 h-9 rounded-xl border text-xs font-bold transition-all duration-200 cursor-pointer ${
+                className={`w-9 h-9 rounded border text-xs font-bold transition-all duration-200 cursor-pointer ${
                   currentPage === i + 1
-                    ? "bg-[#0F1E3C] text-white border-[#0F1E3C] shadow-sm"
+                    ? "bg-[#002244] text-white border-[#002244] shadow-sm"
                     : "bg-white text-gray-500 border-gray-200 hover:bg-gray-100"
                 }`}
               >
@@ -199,9 +231,9 @@ export default function ResourcesHome() {
             <button
               onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
               disabled={currentPage === totalPages}
-              className="p-2 border border-gray-200 rounded-xl hover:bg-gray-100 disabled:opacity-20 hover:cursor-pointer transition shrink-0"
+              className="p-2 border border-gray-200 rounded bg-white hover:bg-gray-100 disabled:opacity-20 hover:cursor-pointer transition shrink-0"
             >
-              <ChevronRight size={16} className="text-gray-600" />
+              <IconChevronRight />
             </button>
           </div>
         )}
