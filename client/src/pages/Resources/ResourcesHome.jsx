@@ -1,18 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { fetchResources } from "../../services/api";
-
-const CATEGORIES = [
-  { label: "Reports", value: "reports" },
-  { label: "Research", value: "research" },
-  { label: "Policy Briefs", value: "policy-briefs" },
-  { label: "Articles", value: "articles" },
-  { label: "Publications", value: "publications" },
-];
-
-const STATES = [
-  "Gujarat", "Andhra Pradesh", "Jharkhand", "Karnataka", "Tamil Nadu", "Maharashtra", "Uttar Pradesh", "Delhi"
-];
+import { useTranslation, Trans } from "react-i18next";
 
 const IconChevronDown = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-white">
@@ -21,6 +10,27 @@ const IconChevronDown = () => (
 );
 
 export default function ResourcesHome() {
+  const { t } = useTranslation();
+  
+  const CATEGORIES = [
+    { label: t("resources.categories.reports"), value: "reports" },
+    { label: t("resources.categories.research"), value: "research" },
+    { label: t("resources.categories.policy-briefs"), value: "policy-briefs" },
+    { label: t("resources.categories.articles"), value: "articles" },
+    { label: t("resources.categories.publications"), value: "publications" },
+  ];
+  
+  const STATES = [
+    t("resources.states.gujarat"),
+    t("resources.states.andhra-pradesh"),
+    t("resources.states.jharkhand"),
+    t("resources.states.karnataka"),
+    t("resources.states.tamil-nadu"),
+    t("resources.states.maharashtra"),
+    t("resources.states.uttar-pradesh"),
+    t("resources.states.delhi")
+  ];
+
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -68,7 +78,7 @@ export default function ResourcesHome() {
       r.title,
       r.category,
       r.date || "N/A",
-      r.source || "Centre for Civil Society",
+      r.source || t("resources.labels.defaultSource"),
       r.excerpt || r.description || "",
       r.pdf || ""
     ]);
@@ -95,13 +105,13 @@ export default function ResourcesHome() {
       <div className={wrapperClass}>
         {/* Dropdown 1: Category */}
         <div>
-          <p className="text-xs font-bold text-gray-600 mb-2">Papers on Doing Business categories:</p>
+          <p className="text-xs font-bold text-gray-600 mb-2">{t("resources.labels.categoryDropdownLabel")}</p>
           <div className="relative">
             <button
               onClick={() => { setCategoryDropdownOpen(!categoryDropdownOpen); setStateDropdownOpen(false); }}
               className="w-full bg-[#0071BC] hover:bg-[#C8793F] text-white font-semibold text-sm px-4 py-3 rounded flex items-center justify-between transition cursor-pointer"
             >
-              <span>{selectedCategory === "all" ? "Select a category" : selectedCategory.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}</span>
+              <span>{selectedCategory === "all" ? t("resources.labels.selectCategory") : selectedCategory.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}</span>
               <IconChevronDown />
             </button>
             {categoryDropdownOpen && (
@@ -114,7 +124,7 @@ export default function ResourcesHome() {
                   }}
                   className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                 >
-                  All Categories
+                  {t("resources.labels.allCategories")}
                 </button>
                 {CATEGORIES.map((cat) => (
                   <button
@@ -137,13 +147,13 @@ export default function ResourcesHome() {
 
         {/* Dropdown 2: State focus */}
         <div>
-          <p className="text-xs font-bold text-gray-600 mb-2">Doing Business state focus:</p>
+          <p className="text-xs font-bold text-gray-600 mb-2">{t("resources.labels.stateDropdownLabel")}</p>
           <div className="relative">
             <button
               onClick={() => { setStateDropdownOpen(!stateDropdownOpen); setCategoryDropdownOpen(false); }}
               className="w-full bg-[#0071BC] hover:bg-[#C8793F] text-white font-semibold text-sm px-4 py-3 rounded flex items-center justify-between transition cursor-pointer"
             >
-              <span>{selectedState === "all" ? "Select a state" : selectedState}</span>
+              <span>{selectedState === "all" ? t("resources.labels.selectState") : selectedState}</span>
               <IconChevronDown />
             </button>
             {stateDropdownOpen && (
@@ -156,7 +166,7 @@ export default function ResourcesHome() {
                   }}
                   className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                 >
-                  All States
+                  {t("resources.labels.allStates")}
                 </button>
                 {STATES.map((st) => (
                   <button
@@ -189,10 +199,10 @@ export default function ResourcesHome() {
   }
 
   const activeTitle = selectedCategory !== "all" 
-    ? `Research on ${selectedCategory.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}`
+    ? t("resources.labels.researchOn", { category: selectedCategory.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") })
     : selectedState !== "all"
-      ? `Research related to ${selectedState}`
-      : "Doing Business and Related Research";
+      ? t("resources.labels.researchRelatedTo", { state: selectedState })
+      : t("resources.labels.doingBusinessResearch");
 
   return (
     <div className="bg-white min-h-screen py-16">
@@ -220,7 +230,7 @@ export default function ResourcesHome() {
                   }}
                   className="text-[#0071BC] hover:text-[#C8793F] hover:underline"
                 >
-                  Doing Business and related research
+                  {t("resources.labels.breadcrumbDoingBusiness")}
                 </button>
                 <span className="mx-2">&gt;</span>
                 <span className="text-gray-700">{selectedCategory !== "all" ? selectedCategory : selectedState}</span>
@@ -231,13 +241,15 @@ export default function ResourcesHome() {
             {!isFilterActive && (
               <div className="text-gray-700 space-y-4 text-[15px] leading-relaxed">
                 <p>
-                  Each year <em>Ease of Doing Business</em> highlights important new work that speaks to a variety of issues impacting the private sector. Brief summaries of this work — including policy briefs, regulatory impact assessments, and academic papers — are available by <em>Ease of Doing Business</em> topic and related policy spaces. If you would like to recommend any additional papers that are not already listed on the website please email your suggestions to the team.
+                  <Trans i18nKey="resources.messages.intro1">
+                    Each year <em>Ease of Doing Business</em> highlights important new work that speaks to a variety of issues impacting the private sector. Brief summaries of this work — including policy briefs, regulatory impact assessments, and academic papers — are available by <em>Ease of Doing Business</em> topic and related policy spaces. If you would like to recommend any additional papers that are not already listed on the website please email your suggestions to the team.
+                  </Trans>
                 </p>
                 <p>
-                  Blogs and publications from our research team are also provided periodically to reflect ground-level MSME reform progress across Indian states.
+                  {t("resources.messages.intro2")}
                 </p>
                 <p>
-                  Make a selection below to see the papers published by category or filtered by regional state focus.
+                  {t("resources.messages.intro3")}
                 </p>
               </div>
             )}
@@ -248,7 +260,7 @@ export default function ResourcesHome() {
             {/* Italic category note on topic view */}
             {isFilterActive && (
               <p className="text-sm text-gray-600 italic">
-                Ease of Doing Business considers the following list of publications as relevant for research on regulations affecting private sector growth. If you find any missing publications, please let us know.
+                {t("resources.messages.italicNote")}
               </p>
             )}
 
@@ -256,11 +268,11 @@ export default function ResourcesHome() {
             <div className="space-y-10 pt-4">
               {initialView ? (
                 <div className="bg-gray-50 border border-gray-200 rounded p-8 text-center">
-                  <p className="text-[#002244] font-bold mb-1.5" style={{ fontFamily: "'Open Sans', sans-serif" }}>Select a Topic or Regional Profile</p>
-                  <p className="text-xs text-gray-500">Choose a research category or state focus to explore reports, briefings, and publications.</p>
+                  <p className="text-[#002244] font-bold mb-1.5" style={{ fontFamily: "'Open Sans', sans-serif" }}>{t("resources.messages.selectTopicHeader")}</p>
+                  <p className="text-xs text-gray-500">{t("resources.messages.selectTopicSub")}</p>
                 </div>
               ) : filteredResources.length === 0 ? (
-                <p className="text-gray-400 italic text-sm">No research papers found matching this selection.</p>
+                <p className="text-gray-400 italic text-sm">{t("resources.messages.noPapers")}</p>
               ) : (
                 filteredResources.map((item) => (
                   <div key={item._id} className="pb-8 border-b border-gray-100 space-y-2">
@@ -276,16 +288,16 @@ export default function ResourcesHome() {
                     {/* Meta Row: Authors / Source */}
                     <div className="text-xs text-gray-600 space-y-1">
                       <p>
-                        <strong className="text-gray-800">Author(s):</strong> {item.author || "Centre for Civil Society Research Team"}
+                        <strong className="text-gray-800">{t("resources.labels.author")}</strong> {item.author || t("resources.labels.defaultAuthor")}
                       </p>
                       <p>
-                        <strong className="text-gray-800">Source:</strong> {item.source || "EODB India Policy Working Paper Series"} {item.date ? `(${item.date})` : ""}
+                        <strong className="text-gray-800">{t("resources.labels.source")}</strong> {item.source || t("resources.labels.defaultSource")} {item.date ? `(${item.date})` : ""}
                       </p>
                     </div>
 
                     {/* Abstract / Summary */}
                     <p className="text-sm text-gray-600 leading-relaxed pt-2">
-                      <strong className="text-gray-700">Abstract:</strong> {item.description || item.excerpt || "This publication investigates state reform action plans and DIPP compliance index outcomes."}
+                      <strong className="text-gray-700">{t("resources.labels.abstract")}</strong> {item.description || item.excerpt || t("resources.labels.defaultAbstract")}
                     </p>
                   </div>
                 ))
@@ -301,7 +313,7 @@ export default function ResourcesHome() {
             {isFilterActive && (
               <div className="space-y-2 pb-6 border-b border-gray-200">
                 <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider" style={{ fontFamily: "'Open Sans', sans-serif" }}>
-                  Modify Search Focus
+                  {t("resources.labels.modifySearchFocus")}
                 </h2>
                 {renderSelectors(true)}
               </div>
@@ -310,21 +322,21 @@ export default function ResourcesHome() {
             {/* DOWNLOAD SECTION */}
             <div className="space-y-3">
               <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider" style={{ fontFamily: "'Open Sans', sans-serif" }}>
-                Download
+                {t("resources.labels.downloadHeading")}
               </h2>
               <a
                 href="#export"
                 onClick={handleExcelExport}
                 className="text-sm text-[#0071BC] hover:text-[#C8793F] hover:underline block leading-snug"
               >
-                Download full list of research papers related to Doing Business topics (Excel)
+                {t("resources.labels.downloadExcel")}
               </a>
             </div>
 
             {/* SIDEBAR NAVIGATION: PAPERS BY TOPICS */}
             <div className="space-y-4">
               <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider" style={{ fontFamily: "'Open Sans', sans-serif" }}>
-                Papers on EODB Topics
+                {t("resources.labels.papersOnTopics")}
               </h2>
               <ul className="space-y-2.5">
                 <li>
@@ -338,7 +350,7 @@ export default function ResourcesHome() {
                       selectedCategory === "all" && selectedState === "all" && !initialView ? "text-gray-900 font-bold" : "text-[#0071BC]"
                     }`}
                   >
-                    All research topics
+                    {t("resources.labels.allResearchTopics")}
                   </button>
                 </li>
                 {CATEGORIES.map((cat) => (
@@ -363,7 +375,7 @@ export default function ResourcesHome() {
             {/* SIDEBAR NAVIGATION: PAPERS BY STATE */}
             <div className="space-y-4">
               <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider" style={{ fontFamily: "'Open Sans', sans-serif" }}>
-                Regional Profiles
+                {t("resources.labels.regionalProfiles")}
               </h2>
               <ul className="space-y-2.5">
                 {STATES.map((st) => (

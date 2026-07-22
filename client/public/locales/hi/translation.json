@@ -1,0 +1,62 @@
+{
+  "navbar": {
+    "home": "मुखपृष्ठ (Home)",
+    "rankings": "Rankings",
+    "about": "About",
+    "resources": "Resources",
+    "contact": "Contact",
+    "language": "Language"
+  },
+  "resources": {
+    "categories": {
+      "reports": "Reports",
+      "research": "Research",
+      "policy-briefs": "Policy Briefs",
+      "articles": "Articles",
+      "publications": "Publications"
+    },
+    "states": {
+      "gujarat": "Gujarat",
+      "andhra-pradesh": "Andhra Pradesh",
+      "jharkhand": "Jharkhand",
+      "karnataka": "Karnataka",
+      "tamil-nadu": "Tamil Nadu",
+      "maharashtra": "Maharashtra",
+      "uttar-pradesh": "Uttar Pradesh",
+      "delhi": "Delhi"
+    },
+    "labels": {
+      "categoryDropdownLabel": "Papers on Doing Business categories:",
+      "selectCategory": "Select a category",
+      "allCategories": "All Categories",
+      "stateDropdownLabel": "Doing Business state focus:",
+      "selectState": "Select a state",
+      "allStates": "All States",
+      "researchOn": "Research on {{category}}",
+      "researchRelatedTo": "Research related to {{state}}",
+      "doingBusinessResearch": "Doing Business and Related Research",
+      "breadcrumbDoingBusiness": "Doing Business and related research",
+      "author": "Author(s):",
+      "source": "Source:",
+      "abstract": "Abstract:",
+      "defaultAuthor": "Centre for Civil Society Research Team",
+      "defaultSource": "EODB India Policy Working Paper Series",
+      "defaultAbstract": "This publication investigates state reform action plans and DIPP compliance index outcomes.",
+      "modifySearchFocus": "Modify Search Focus",
+      "downloadHeading": "Download",
+      "downloadExcel": "Download full list of research papers related to Doing Business topics (Excel)",
+      "papersOnTopics": "Papers on EODB Topics",
+      "allResearchTopics": "All research topics",
+      "regionalProfiles": "Regional Profiles"
+    },
+    "messages": {
+      "intro1": "Each year <1>Ease of Doing Business</1> highlights important new work that speaks to a variety of issues impacting the private sector. Brief summaries of this work — including policy briefs, regulatory impact assessments, and academic papers — are available by <3>Ease of Doing Business</3> topic and related policy spaces. If you would like to recommend any additional papers that are not already listed on the website please email your suggestions to the team.",
+      "intro2": "Blogs and publications from our research team are also provided periodically to reflect ground-level MSME reform progress across Indian states.",
+      "intro3": "Make a selection below to see the papers published by category or filtered by regional state focus.",
+      "italicNote": "Ease of Doing Business considers the following list of publications as relevant for research on regulations affecting private sector growth. If you find any missing publications, please let us know.",
+      "selectTopicHeader": "Select a Topic or Regional Profile",
+      "selectTopicSub": "Choose a research category or state focus to explore reports, briefings, and publications.",
+      "noPapers": "No research papers found matching this selection."
+    }
+  }
+}
