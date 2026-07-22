@@ -1,0 +1,31 @@
+Rank,State Name,Type,Region,Overall Score,"1. Regulatory Clarity, Predictability & Accessibility",2. Regulatory Compliance,3. Operations without Arbitrary Regulatory Action,4. Financial Sustainability & Resource Mobilization,5. School Lifecycle Operations,6. Institutional Autonomy
+1,Telangana,STATE,South,29.68,47.89,48.7,19,3.03,11.67,47.88
+2,Haryana,STATE,North,27.65,53.78,31.86,43.85,6.06,11.67,18.75
+3,Andhra Pradesh,STATE,South,27.1,49.97,40.75,11.88,15.91,6.67,37.5
+4,Bihar,STATE,East,25.63,41.97,35.29,32.67,9.09,6.67,28.13
+5,Assam,STATE,Northeast,25.43,42.58,43.42,19.63,9.09,6.67,31.25
+6,Jharkhand,STATE,East,24.58,45.9,24.57,34.59,4.55,6.67,31.25
+7,Maharashtra,STATE,West,24.17,38.45,25.96,55.56,7.58,5,12.5
+8,Kerala,STATE,South,24.11,51.65,40.67,14.58,3.03,6.67,28.13
+9,Jammu and Kashmir,UT,North,22.97,42.21,29.56,19.23,10.61,5,31.25
+10,Punjab,STATE,North,22.78,37.89,34.3,24.83,3.03,11.67,25
+11,Delhi,UT,North,21.83,42.28,30.95,30.58,8.06,6.67,12.5
+12,Himachal Pradesh,STATE,North,21.41,48.05,28.55,17.31,6.06,6.67,21.88
+13,Odisha,STATE,East,21.14,38.82,33.33,22.92,0,5.83,26
+14,Manipur,STATE,Northeast,20.6,36.62,32.12,35.73,0,6.67,12.5
+15,Madhya Pradesh,STATE,Central,20.58,29.52,18.42,25.38,6.06,6.67,37.5
+16,Nagaland,STATE,Northeast,20.04,30.44,36.5,8.35,0,7.5,37.5
+17,Chhatisgarh,STATE,Central,19.81,23.29,36.11,31.03,3.03,6.67,18.75
+18,Meghalaya,STATE,Northeast,19.33,34.73,44.05,8.87,6.06,6.67,15.63
+19,Tripura,STATE,Northeast,19.18,39.93,33.73,22.32,0,6.67,12.5
+20,Uttarakhand,STATE,North,18.51,33.08,33.91,12.42,0,6.67,25
+21,Rajasthan,STATE,North,18.46,33.27,28.55,21.9,7.06,7.5,12.5
+22,Uttar Pradesh,STATE,North,17.92,34.06,26.56,18.69,9.09,6.67,12.5
+23,Gujarat,STATE,West,17.9,31.23,29.76,25.44,1,7.5,12.5
+24,West Bengal,STATE,East,17.23,31.98,32.13,10.93,1.52,5,21.88
+25,Mizoram,STATE,Northeast,16.89,33.84,27.75,17.7,6.06,6.67,9.38
+26,Arunachal Pradesh,STATE,Northeast,16.87,33.83,40.87,12.67,0,6.67,7.25
+27,Tamil Nadu,STATE,South,16.85,22.82,31.8,29.42,4.03,5.83,7.25
+28,Karnataka,STATE,South,16.74,32.27,33.33,9.59,11.36,6.67,7.25
+29,Goa,STATE,West,16.23,38.51,32.12,9.54,0,10,7.25
+30,Sikkim,STATE,Northeast,13.97,19.98,34.3,10.43,0,6.67,12.5
